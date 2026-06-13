@@ -23,12 +23,6 @@ DITING_API_BASE = os.environ.get("DITING_API_BASE", "https://api.diting.cc")
 DITING_API_KEY = os.environ.get("DITING_API_KEY", "").strip()
 ISSUE_BODY = os.environ.get("ISSUE_BODY", "")
 ISSUE_TITLE = os.environ.get("ISSUE_TITLE", "")
-SELECTED_PAGE = os.environ.get("SELECTED_PAGE", "").strip()  # 指定分P页码，如 "3"
-# 如果环境变量未设置，尝试从 Issue 正文中提取 SELECTED=数字
-if not SELECTED_PAGE:
-    m = re.search(r'SELECTED\s*[=：:]\s*(\d+)', ISSUE_BODY, re.IGNORECASE)
-    if m:
-        SELECTED_PAGE = m.group(1)
 
 # 知识库分类映射：根据标题/标签关键词自动归类
 CATEGORY_KEYWORDS = {
@@ -416,22 +410,15 @@ def main():
     is_multi_part = video_data.get("is_multi_part") is True
 
     if parts and (is_collection or is_multi_part):
-        # 分P选择（对齐前端：is_selected > SELECTED_PAGE > URL 中 p= > 默认第1P）
-        page_num = None
-        if SELECTED_PAGE.isdigit():
-            page_num = int(SELECTED_PAGE)
-        else:
-            # 使用 check API 返回的 is_selected 标记
-            selected_part = next((p for p in parts if p.get("is_selected")), None)
-            if selected_part:
-                page_num = selected_part.get("part_index") or extract_page_number(bilibili_url) or 1
-            else:
-                page_num = extract_page_number(bilibili_url)
-
+        # 分P选择（对齐前端：check API 返回的 is_selected > URL 中 p= > 默认第1P）
+        page_num = extract_page_number(bilibili_url)
+        selected_part = next((p for p in parts if p.get("is_selected")), None)
+        if selected_part:
+            page_num = selected_part.get("part_index") or page_num
         # 页码从1开始，列表索引从0开始
         page_idx = max(0, min(page_num - 1, len(parts) - 1))
         selected = parts[page_idx]
-        print(f"📌 分P选择: SELECTED_PAGE={SELECTED_PAGE!r}, is_selected={'✓' if any(p.get('is_selected') for p in parts) else '✗'}, 最终选第{page_idx + 1}P")
+        print(f"📌 分P选择: is_selected={'✓' if any(p.get('is_selected') for p in parts) else '✗'}, 最终选第{page_idx + 1}P")
         part_url = clean_url(selected.get("url", ""))
         video_entry = {
             "url": part_url,
