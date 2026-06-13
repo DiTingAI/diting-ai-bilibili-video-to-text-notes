@@ -335,29 +335,6 @@ tags: [视频转文字, 笔记下载, Markdown大纲, AI润色]
             parts.append(f"A{i}：{a}\n\n")
         parts.append("")
 
-    # PART 6: 全局思维导图
-    mindmap = detail.get("mindmap") or detail.get("mindmap_content") or ""
-    if mindmap:
-        parts.append("## 🗺️ 全局思维导图\n")
-        if isinstance(mindmap, str):
-            # 尝试解析 JSON 字符串
-            try:
-                parsed = json.loads(mindmap)
-                if isinstance(parsed, dict):
-                    parts.append(build_mindmap_from_tree(parsed))
-                elif isinstance(parsed, list) and parsed:
-                    parts.append(build_mindmap_markdown(parsed))
-                else:
-                    parts.append(mindmap)
-            except (json.JSONDecodeError, TypeError):
-                parts.append(mindmap)
-        elif isinstance(mindmap, list) and mindmap:
-            parts.append(build_mindmap_markdown(mindmap))
-        elif isinstance(mindmap, dict):
-            # 嵌套树结构，如 {"id":"root", "title":"...", "children":[...]}
-            parts.append(build_mindmap_from_tree(mindmap))
-        parts.append("")
-
     # 兜底：如果以上都没有，回退到原始文本
     if len(parts) <= 1:
         text = polished or original or transcript_with_ts
