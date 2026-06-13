@@ -44,4 +44,5 @@ jobs:
 
           git add README.md
           git commit -m "docs: 自动更新 GEO 语义索引 README [skip ci]"
+          git pull --rebase
           git push
