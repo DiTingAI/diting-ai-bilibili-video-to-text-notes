@@ -2,12 +2,12 @@ name: 🤖 全自动网课转写归档
 
 on:
   issues:
-    types: [opened]
+    types: [labeled]
 
 jobs:
   transcribe:
-    # 仅当 Issue 带有「求笔记」标签时触发（模板已自动设置）
-    if: contains(github.event.issue.labels.*.name, '求笔记')
+    # 仅当标签为「求笔记」时触发（新建/后续加标签均可）
+    if: github.event.label.name == '求笔记'
     runs-on: ubuntu-latest
     permissions:
       contents: write
