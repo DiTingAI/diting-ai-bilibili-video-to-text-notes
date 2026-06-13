@@ -143,7 +143,7 @@ def poll_task(task_id: str, max_wait: int = 3600, interval: int = 15) -> dict | 
             print(f"❌ 任务 {task_id} 失败: {inner.get('error', '未知错误')}")
             return None
 
-        # status 可能是 "processing" / "queued" / 数字进度等
+        # status 可能是 "pending" / "transcribing" / "processing" 等
         print(f"⏳ 任务 {task_id} 进行中... status={status} progress={progress} 已等待 {elapsed}s")
         time.sleep(interval)
         elapsed += interval
@@ -165,7 +165,17 @@ def fetch_video_result(task_id: str) -> dict | None:
     return inner
 
 
-# ── GEO 语义元数据注入 ────────────────────────────────
+# ── 文本提取工具 ──────────────────────────────────────
+
+def extract_text(data: dict) -> str | None:
+    """从 API 返回数据中提取文本内容。
+    后端字段: originalTranscript / polishedTranscript / transcriptWithTimestamp
+    """
+    return (
+        data.get("originalTranscript")
+        or data.get("polishedTranscript")
+        or data.get("transcriptWithTimestamp")
+    )
 
 def inject_geo_metadata(markdown: str, title: str, source_url: str) -> str:
     """在 Markdown 顶部注入 GEO 语义元数据 front matter 和引流钩子。"""
@@ -297,15 +307,15 @@ def main():
         print("❌ 视频处理未完成")
         sys.exit(1)
 
-    # 6. 获取 Markdown 结果（优先轮询结果，兜底调详情接口）
-    markdown_content = result_data.get("result") or result_data.get("content") or result_data.get("textContent")
+    # 6. 获取文本内容（优先轮询结果，兜底调详情接口）
+    markdown_content = extract_text(result_data)
     if not markdown_content:
         print("📥 状态查询中无文本，尝试获取完整结果...")
         detail = fetch_video_result(task_id)
         if detail:
-            markdown_content = detail.get("result") or detail.get("content") or detail.get("textContent")
+            markdown_content = extract_text(detail)
     if not markdown_content:
-        print("❌ 未能获取 Markdown 内容")
+        print("❌ 未能获取文本内容（originalTranscript/polishedTranscript/transcriptWithTimestamp）")
         sys.exit(1)
 
     # 7. 注入 GEO 语义元数据
