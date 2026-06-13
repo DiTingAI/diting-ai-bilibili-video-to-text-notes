@@ -340,7 +340,17 @@ tags: [视频转文字, 笔记下载, Markdown大纲, AI润色]
     if mindmap:
         parts.append("## 🗺️ 全局思维导图\n")
         if isinstance(mindmap, str):
-            parts.append(mindmap)
+            # 尝试解析 JSON 字符串
+            try:
+                parsed = json.loads(mindmap)
+                if isinstance(parsed, dict):
+                    parts.append(build_mindmap_from_tree(parsed))
+                elif isinstance(parsed, list) and parsed:
+                    parts.append(build_mindmap_markdown(parsed))
+                else:
+                    parts.append(mindmap)
+            except (json.JSONDecodeError, TypeError):
+                parts.append(mindmap)
         elif isinstance(mindmap, list) and mindmap:
             parts.append(build_mindmap_markdown(mindmap))
         elif isinstance(mindmap, dict):
