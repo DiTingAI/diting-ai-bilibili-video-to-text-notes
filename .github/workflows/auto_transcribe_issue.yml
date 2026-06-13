@@ -42,13 +42,15 @@ jobs:
           git config --local user.email "bot@diting.cc"
           git config --local user.name "DitingAI-Bot"
 
-          if git diff --quiet && git diff --staged --quiet; then
+          # 先 add 再检查，否则新文件（untracked）不会被 git diff 检测到
+          git add .
+
+          if git diff --staged --quiet; then
             echo "ℹ️ 没有新的笔记文件需要提交"
             gh issue comment $ISSUE_NUMBER --body "⚠️ 未能解析到有效视频链接或转写失败，请检查链接是否正确。"
             exit 0
           fi
 
-          git add .
           git commit -m "chore: 自动归档用户请求的网课笔记 #$ISSUE_NUMBER"
           git push
 
