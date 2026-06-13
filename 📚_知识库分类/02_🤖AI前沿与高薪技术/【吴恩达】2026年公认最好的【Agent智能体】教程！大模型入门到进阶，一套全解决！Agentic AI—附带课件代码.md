@@ -1,6 +1,6 @@
 ---
 title: 【吴恩达】2026年公认最好的【Agent智能体】教程！大模型入门到进阶，一套全解决！Agentic AI—附带课件代码
-source: Bilibili (https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=2)
+source: Bilibili (https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4)
 extractor: https://diting.cc 创作者版
 tags: [视频转文字, 笔记下载, Markdown大纲, AI润色]
 ---
@@ -17,48 +17,48 @@ tags: [视频转文字, 笔记下载, Markdown大纲, AI润色]
 > 点击任意 `[00:15:23]` 时间戳，直达 B 站原视频对应秒数
 
 
-00:00:00 - Welcome to this course on agentic AI.
-00:00:02 - When I coined the term agentic to describe what I saw as
-00:00:05 - an important and rapidly growing trend in
-00:00:08 - how people were building on-base applications,
-00:00:10 - what I did not realize was that a bunch of marketers
-00:00:13 - would get hold of this term and use it as
-00:00:15 - a sticker and put this on almost everything in sight,
-00:00:18 - and that has caused hype on agentic AI to skyrocket.
-00:00:23 - The good news though is that ignoring the hype,
-00:00:26 - the number of truly valuable and useful applications
-00:00:29 - built using agentic AI has also grown very rapidly,
-00:00:32 - even if not quite as rapidly as the hype.
-00:00:35 - In this course, what I'd like to do is show you
-00:00:38 - best practices for building agentic AI applications,
-00:00:42 - and this will open up a lot of new opportunities
-00:00:44 - to you in terms of what you can now build.
-00:00:46 - Today, agentic workflows are being used to build
-00:00:49 - applications like customer support agents,
-00:00:51 - or to do deep research to help write
-00:00:54 - deeply insightful research reports,
-00:00:57 - or to process tricky legal documents,
-00:00:59 - or to look at patient input and suggest
-00:01:02 - possible medical diagnoses.
-00:01:05 - On many of my teams, a lot of the projects we built
-00:01:08 - just would be impossible without agentic workflows,
-00:01:11 - and so knowing how to build applications with them
-00:01:14 - is one of the most important and valuable skills in AI today.
-00:01:18 - It turns out that one of the biggest differences I've seen
-00:01:21 - between people that really know how to build
-00:01:23 - agentic workflows, compared to people
-00:01:25 - that are less effective at it,
-00:01:26 - is the ability to drive a disciplined development process,
-00:01:30 - specifically one focused on evals and error analysis.
-00:01:33 - And in this course, I'll tell you what that means
-00:01:35 - and show you what allows you to be really good
-00:01:38 - at building these agentic workflows.
-00:01:41 - Being able to do this is one of the most important skills
-00:01:44 - in AI today and will open up a lot more opportunities,
-00:01:47 - be it job opportunities or opportunities
-00:01:49 - to just build amazing software yourself.
-00:01:52 - With that, let's go on to the next video
-00:01:54 - to dive more into agentic workflows.
+[00:00:00](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=0) - Welcome to this course on agentic AI.
+[00:00:02](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=2) - When I coined the term agentic to describe what I saw as
+[00:00:05](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=5) - an important and rapidly growing trend in
+[00:00:08](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=8) - how people were building on-base applications,
+[00:00:10](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=10) - what I did not realize was that a bunch of marketers
+[00:00:13](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=13) - would get hold of this term and use it as
+[00:00:15](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=15) - a sticker and put this on almost everything in sight,
+[00:00:18](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=18) - and that has caused hype on agentic AI to skyrocket.
+[00:00:23](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=23) - The good news though is that ignoring the hype,
+[00:00:26](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=26) - the number of truly valuable and useful applications
+[00:00:29](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=29) - built using agentic AI has also grown very rapidly,
+[00:00:32](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=32) - even if not quite as rapidly as the hype.
+[00:00:35](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=35) - In this course, what I'd like to do is show you
+[00:00:38](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=38) - best practices for building agentic AI applications,
+[00:00:42](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=42) - and this will open up a lot of new opportunities
+[00:00:44](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=44) - to you in terms of what you can now build.
+[00:00:46](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=46) - Today, agentic workflows are being used to build
+[00:00:49](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=49) - applications like customer support agents,
+[00:00:51](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=51) - or to do deep research to help write
+[00:00:54](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=54) - deeply insightful research reports,
+[00:00:57](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=57) - or to process tricky legal documents,
+[00:00:59](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=59) - or to look at patient input and suggest
+[00:01:02](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=62) - possible medical diagnoses.
+[00:01:05](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=65) - On many of my teams, a lot of the projects we built
+[00:01:08](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=68) - just would be impossible without agentic workflows,
+[00:01:11](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=71) - and so knowing how to build applications with them
+[00:01:14](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=74) - is one of the most important and valuable skills in AI today.
+[00:01:18](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=78) - It turns out that one of the biggest differences I've seen
+[00:01:21](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=81) - between people that really know how to build
+[00:01:23](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=83) - agentic workflows, compared to people
+[00:01:25](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=85) - that are less effective at it,
+[00:01:26](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=86) - is the ability to drive a disciplined development process,
+[00:01:30](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=90) - specifically one focused on evals and error analysis.
+[00:01:33](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=93) - And in this course, I'll tell you what that means
+[00:01:35](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=95) - and show you what allows you to be really good
+[00:01:38](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=98) - at building these agentic workflows.
+[00:01:41](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=101) - Being able to do this is one of the most important skills
+[00:01:44](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=104) - in AI today and will open up a lot more opportunities,
+[00:01:47](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=107) - be it job opportunities or opportunities
+[00:01:49](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=109) - to just build amazing software yourself.
+[00:01:52](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=112) - With that, let's go on to the next video
+[00:01:54](https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.videopod.episodes&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31&p=4&t=114) - to dive more into agentic workflows.
 
 ## ✨ AI 润色精校版
 
