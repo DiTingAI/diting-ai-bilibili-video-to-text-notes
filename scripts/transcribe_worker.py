@@ -106,7 +106,13 @@ def submit_process_task_with_payload(videos: list[dict]) -> dict:
     payload = {"videos": videos}
 
     resp = requests.post(api_url, json=payload, headers=headers, timeout=30, verify=False)
-    resp.raise_for_status()
+    try:
+        resp.raise_for_status()
+    except requests.HTTPError:
+        print(f"🔍 请求体: {json.dumps(payload, ensure_ascii=False)}")
+        print(f"🔍 响应状态: {resp.status_code}")
+        print(f"🔍 响应内容: {resp.text[:1000]}")
+        raise
     return resp.json()
 
 
