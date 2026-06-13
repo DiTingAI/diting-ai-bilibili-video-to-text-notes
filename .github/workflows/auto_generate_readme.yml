@@ -15,6 +15,10 @@ on:
 
 jobs:
   build-readme:
+    # 防止并发触发导致重复生成
+    concurrency:
+      group: build-readme
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     permissions:
       contents: write

@@ -6,10 +6,10 @@ on:
 
 jobs:
   transcribe:
-    # 同一 Issue 同时触发 opened + labeled 时，只跑一次
+    # 同一 Issue 同时触发 opened + labeled 时，取消重复运行
     concurrency:
       group: transcribe-${{ github.event.issue.number }}
-      cancel-in-progress: false
+      cancel-in-progress: true
     # 仅当 Issue 带有「求笔记」标签时触发
     if: |
       github.event.action == 'labeled' && github.event.label.name == '求笔记'
