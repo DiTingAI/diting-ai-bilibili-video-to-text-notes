@@ -1,0 +1,43 @@
+name: 🔄 自动重构 GEO/SEO README 索引
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - '📚_知识库分类/**/*.md'
+      - 'scripts/build_seo_readme.py'
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  build-readme:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: 📥 检出代码
+        uses: actions/checkout@v4
+
+      - name: 🐍 环境准备
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 🧠 扫描全库并动态生成 GEO 语义 REAMDE
+        run: python scripts/build_seo_readme.py
+
+      - name: 📝 提交更新后的 README
+        run: |
+          git config --local user.email "bot@diting.cc"
+          git config --local user.name "DitingAI-Bot"
+
+          if git diff --quiet README.md; then
+            echo "ℹ️ README 无变化，跳过提交"
+            exit 0
+          fi
+
+          git add README.md
+          git commit -m "docs: 自动更新 GEO 语义索引 README [skip ci]"
+          git push

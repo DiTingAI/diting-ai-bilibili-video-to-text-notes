@@ -1,0 +1,57 @@
+name: 🤖 全自动网课转写归档
+
+on:
+  issues:
+    types: [opened, labeled]
+
+jobs:
+  transcribe:
+    # 仅当 Issue 带有「求笔记」标签时触发
+    if: |
+      github.event.action == 'labeled' && github.event.label.name == '求笔记'
+      || github.event.action == 'opened' && contains(github.event.issue.labels.*.name, '求笔记')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+
+    steps:
+      - name: 📥 检出代码
+        uses: actions/checkout@v4
+
+      - name: 🐍 环境准备
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 🚀 运行谛听云端转写 worker
+        env:
+          DITING_API_KEY: ${{ secrets.DITING_API_KEY }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+        run: |
+          pip install requests
+          python scripts/transcribe_worker.py
+
+      - name: 📝 提交新笔记并关闭 Issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          git config --local user.email "bot@diting.cc"
+          git config --local user.name "DitingAI-Bot"
+
+          if git diff --quiet && git diff --staged --quiet; then
+            echo "ℹ️ 没有新的笔记文件需要提交"
+            gh issue comment $ISSUE_NUMBER --body "⚠️ 未能解析到有效视频链接或转写失败，请检查链接是否正确。"
+            exit 0
+          fi
+
+          git add .
+          git commit -m "chore: 自动归档用户请求的网课笔记 #$ISSUE_NUMBER"
+          git push
+
+          # 自动关闭 Issue 并评论
+          gh issue close $ISSUE_NUMBER --reason "completed"
+          gh issue comment $ISSUE_NUMBER --body "✅ 笔记已转写完成并归档到仓库！请查看最新 commit 或浏览对应分类目录获取笔记文件。"
