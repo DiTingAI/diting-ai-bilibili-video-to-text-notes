@@ -101,12 +101,6 @@ def extract_bvid(url: str) -> str | None:
     return m.group(1) if m else None
 
 
-def extract_page_number(url: str) -> int:
-    """从 B 站 URL 中提取 p= 参数，返回页码（从1开始），默认返回 1。"""
-    m = re.search(r'[?&]p=(\d+)', url)
-    return int(m.group(1)) if m else 1
-
-
 # ── API 调用 ──────────────────────────────────────────
 
 def check_bilibili_video(bilibili_url: str) -> dict:
@@ -410,29 +404,23 @@ def main():
     is_multi_part = video_data.get("is_multi_part") is True
 
     if parts and (is_collection or is_multi_part):
-        # 分P选择（对齐前端：check API 返回的 is_selected > URL 中 p= > 默认第1P）
-        page_num = extract_page_number(bilibili_url)
-        selected_part = next((p for p in parts if p.get("is_selected")), None)
-        if selected_part:
-            page_num = selected_part.get("part_index") or page_num
-        # 页码从1开始，列表索引从0开始
-        page_idx = max(0, min(page_num - 1, len(parts) - 1))
-        selected = parts[page_idx]
-        print(f"📌 分P选择: is_selected={'✓' if any(p.get('is_selected') for p in parts) else '✗'}, 最终选第{page_idx + 1}P")
-        part_url = clean_url(selected.get("url", ""))
-        video_entry = {
-            "url": part_url,
-            "thumbnail": clean_url(selected.get("thumbnail") or video_data.get("thumbnail", "")),
-            "title": selected.get("title") or video_data.get("title", ""),
-            "duration": selected.get("duration") or video_data.get("duration", "0:00"),
-            "cid": selected.get("cid"),
-            "aid": selected.get("aid"),
-            "season_id": video_data.get("season_id", 0) if is_collection else 0,
-            "total_pages": 1,
-            "pubdate": selected.get("pubdate", 0),
-        }
-        videos_payload.append(video_entry)
-        print(f"📦 检测到合集/多P（共{len(parts)}P），处理第 {page_idx + 1}P: {selected.get('title', '')}")
+        # 多P/合集：批量提交所有分P，每个分P独立生成MD文件
+        print(f"📦 检测到合集/多P（共{len(parts)}P），批量提交所有分P...")
+        for part in parts:
+            part_url = clean_url(part.get("url", ""))
+            video_entry = {
+                "url": part_url,
+                "thumbnail": clean_url(part.get("thumbnail") or video_data.get("thumbnail", "")),
+                "title": part.get("title") or video_data.get("title", ""),
+                "duration": part.get("duration") or video_data.get("duration", "0:00"),
+                "cid": part.get("cid"),
+                "aid": part.get("aid"),
+                "season_id": video_data.get("season_id", 0) if is_collection else 0,
+                "total_pages": len(parts),
+                "pubdate": part.get("pubdate", 0),
+            }
+            videos_payload.append(video_entry)
+        print(f"📦 共 {len(videos_payload)} 个分P待处理")
     else:
         # 单视频
         videos_payload.append({
@@ -461,46 +449,51 @@ def main():
     if isinstance(task_ids, str):
         task_ids = [task_ids]
     if isinstance(task_ids, list) and len(task_ids) > 0:
-        task_id = task_ids[0]
+        pass  # 使用 task_ids 列表
     else:
-        task_id = res_data.get("task_id")
-    if not task_id:
+        single_id = res_data.get("task_id")
+        if single_id:
+            task_ids = [single_id]
+    if not task_ids:
         print(f"❌ API 返回异常，未找到 task_id: {json.dumps(res_data, ensure_ascii=False)[:500]}")
         sys.exit(1)
 
-    print(f"✅ 任务已提交: {task_id}")
+    print(f"✅ 任务已提交: {len(task_ids)} 个任务，task_ids={task_ids}")
 
-    # 5. 轮询等待完成
-    print("⏳ 等待云端多线程集群处理...")
-    result_data = poll_task(task_id)
-    if not result_data:
-        print("❌ 视频处理未完成")
-        sys.exit(1)
-
-    # 6. 获取全量详情数据（含 AI 大纲、逻辑洞察、QA 对、思维导图等）
-    print("📥 获取完整视频处理结果...")
-    detail = fetch_video_result(task_id)
-    if not detail:
-        print("❌ 未能获取完整视频结果")
-        sys.exit(1)
-
-    # 7. 构建多维度 Markdown（逐字稿 + 可点击时间戳 + AI大纲 + 逻辑洞察 + QA对 + 思维导图）
-    markdown_content = build_comprehensive_markdown(detail, title, bilibili_url)
-    if not markdown_content:
-        print("❌ 未能生成 Markdown 内容")
-        sys.exit(1)
-
-    # 8. 写入文件
+    # 5. 逐个轮询等待完成并归档
     repo_root = Path(__file__).resolve().parent.parent
-    safe_title = sanitize_filename(title)
-    output_dir = repo_root / "📚_知识库分类" / category
-    output_dir.mkdir(parents=True, exist_ok=True)
+    for i, task_id in enumerate(task_ids):
+        print(f"\n{'='*40}")
+        print(f"⏳ [{i+1}/{len(task_ids)}] 等待任务 {task_id} 完成...")
+        result_data = poll_task(task_id)
+        if not result_data:
+            print(f"❌ 任务 {task_id} 处理失败，跳过")
+            continue
 
-    output_file = output_dir / f"{safe_title}.md"
-    output_file.write_text(markdown_content, encoding="utf-8")
+        print(f"📥 [{i+1}/{len(task_ids)}] 获取任务 {task_id} 完整结果...")
+        detail = fetch_video_result(task_id)
+        if not detail:
+            print(f"❌ 任务 {task_id} 未能获取完整结果，跳过")
+            continue
 
-    print(f"✅ 笔记已归档: {output_file}")
-    print("🎉 全自动转写流水线执行完毕！")
+        # 使用分P自己的标题（而非合集标题）
+        part_title = detail.get("title") or f"{title}_P{i+1}"
+        print(f"📹 [{i+1}/{len(task_ids)}] 标题: {part_title}")
+
+        markdown_content = build_comprehensive_markdown(detail, part_title, bilibili_url)
+        if not markdown_content:
+            print(f"❌ 任务 {task_id} 未能生成 Markdown，跳过")
+            continue
+
+        safe_title = sanitize_filename(part_title)
+        output_dir = repo_root / "📚_知识库分类" / category
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        output_file = output_dir / f"{safe_title}.md"
+        output_file.write_text(markdown_content, encoding="utf-8")
+        print(f"✅ [{i+1}/{len(task_ids)}] 笔记已归档: {output_file}")
+
+    print("\n🎉 全自动转写流水线执行完毕！")
 
 
 if __name__ == "__main__":
