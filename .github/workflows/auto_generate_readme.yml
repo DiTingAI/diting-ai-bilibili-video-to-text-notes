@@ -6,7 +6,6 @@ on:
       - main
       - master
     paths:
-      - '📚_知识库分类/**/*.md'
       - 'scripts/build_seo_readme.py'
   workflow_run:
     workflows: ["🤖 全自动网课转写归档"]
