@@ -12,7 +12,11 @@ import sys
 import json
 import time
 import requests
+import urllib3
 from pathlib import Path
+
+# 禁用 SSL 警告（GitHub Actions 环境可能不信任国内 CA）
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # ── 配置 ──────────────────────────────────────────────
 DITING_API_BASE = os.environ.get("DITING_API_BASE", "https://api.diting.cc")
@@ -79,7 +83,7 @@ def submit_transcription_task(bilibili_url: str) -> dict:
     }
     payload = {"video_url": bilibili_url}
 
-    resp = requests.post(api_url, json=payload, headers=headers, timeout=30)
+    resp = requests.post(api_url, json=payload, headers=headers, timeout=30, verify=False)
     resp.raise_for_status()
     return resp.json()
 
@@ -91,7 +95,7 @@ def poll_task(task_id: str, max_wait: int = 3600, interval: int = 15) -> dict | 
 
     elapsed = 0
     while elapsed < max_wait:
-        resp = requests.get(api_url, headers=headers, timeout=15)
+        resp = requests.get(api_url, headers=headers, timeout=15, verify=False)
         resp.raise_for_status()
         data = resp.json()
 
@@ -119,7 +123,7 @@ def fetch_markdown(task_id: str) -> str | None:
     api_url = f"{DITING_API_BASE}/api/v1/async/task/{task_id}"
     headers = {"Authorization": f"Bearer {DITING_API_KEY}"}
 
-    resp = requests.get(api_url, headers=headers, timeout=30)
+    resp = requests.get(api_url, headers=headers, timeout=30, verify=False)
     resp.raise_for_status()
     data = resp.json()
 
