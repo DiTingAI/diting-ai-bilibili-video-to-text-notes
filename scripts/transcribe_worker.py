@@ -54,13 +54,18 @@ def extract_bilibili_url(text: str) -> str | None:
 
 
 def classify_category(title: str, body: str) -> str:
-    """根据标题和正文关键词自动归类到对应文件夹。"""
+    """根据标题和正文关键词自动归类，按匹配数量选最优分类。"""
     combined = (title + " " + body).lower()
+    best_category = DEFAULT_CATEGORY
+    best_count = 0
+
     for category, keywords in CATEGORY_KEYWORDS.items():
-        for kw in keywords:
-            if kw.lower() in combined:
-                return category
-    return DEFAULT_CATEGORY
+        count = sum(1 for kw in keywords if kw.lower() in combined)
+        if count > best_count:
+            best_count = count
+            best_category = category
+
+    return best_category
 
 
 def sanitize_filename(name: str, max_len: int = 80) -> str:
