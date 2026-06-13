@@ -180,11 +180,11 @@ def generate_readme():
     # 收集统计数据
     categories = [d for d in sorted(BASE_DIR.iterdir()) if d.is_dir() and d.name != ".gitkeep"]
     total_notes = 0
+    active_categories = 0
 
     content = README_HEADER
     content = content.replace("{{UPDATED_AT}}", now)
     content = content.replace("{{REPO_FULL_NAME}}", repo_full_name)
-    content = content.replace("{{CATEGORY_COUNT}}", str(len(categories)))
 
     # 遍历每个分类
     for category in categories:
@@ -197,6 +197,7 @@ def generate_readme():
         if not subfolders and not direct_notes:
             continue
 
+        active_categories += 1
         content += f"### {cat_name}\n\n"
 
         if subfolders:
@@ -222,7 +223,7 @@ def generate_readme():
 
         content += "\n"
 
-    # 替换笔记总数
+    content = content.replace("{{CATEGORY_COUNT}}", str(active_categories))
     content = content.replace("{{NOTE_COUNT}}", str(total_notes))
 
     # 追加尾部
@@ -235,7 +236,7 @@ def generate_readme():
     readme_path.write_text(content, encoding="utf-8")
 
     print(f"✅ README.md 已生成")
-    print(f"   📂 分类数: {len(categories)}")
+    print(f"   📂 分类数: {active_categories}")
     print(f"   📄 笔记数: {total_notes}")
     print(f"   🕐 更新时间: {now}")
 
