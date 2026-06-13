@@ -31,9 +31,10 @@ CATEGORY_KEYWORDS = {
         "数学", "张宇", "汤家凤", "李永乐", "肖秀荣", "徐涛", "腿姐",
     ],
     "02_🤖AI前沿与高薪技术": [
-        "AI", "人工智能", "机器学习", "深度学习", "LLM", "大模型",
+        "AI", "人工智能", "智能体", "机器学习", "深度学习", "LLM", "大模型",
         "吴恩达", "李飞飞", "Prompt", "ChatGPT", "GPT", "Agent",
         "Python", "编程", "前端", "后端", "全栈", "算法",
+        "AGI", "AIGC", "RAG", "神经网络", "transformer",
     ],
 }
 DEFAULT_CATEGORY = "02_🤖AI前沿与高薪技术"
@@ -54,13 +55,23 @@ def extract_bilibili_url(text: str) -> str | None:
 
 
 def classify_category(title: str, body: str) -> str:
-    """根据标题和正文关键词自动归类，按匹配数量选最优分类。"""
+    """根据标题和正文关键词自动归类，按匹配数量选最优分类。
+    短关键词（≤3字符）使用词边界匹配，避免误匹配。"""
     combined = (title + " " + body).lower()
     best_category = DEFAULT_CATEGORY
     best_count = 0
 
     for category, keywords in CATEGORY_KEYWORDS.items():
-        count = sum(1 for kw in keywords if kw.lower() in combined)
+        count = 0
+        for kw in keywords:
+            kw_lower = kw.lower()
+            if len(kw_lower) <= 3:
+                # 短关键词用词边界匹配，避免 "AI" 误匹配 "certain" 等
+                if re.search(r'\b' + re.escape(kw_lower) + r'\b', combined):
+                    count += 1
+            else:
+                if kw_lower in combined:
+                    count += 1
         if count > best_count:
             best_count = count
             best_category = category
@@ -220,11 +231,7 @@ def main():
 
     print(f"✅ 检测到 B 站链接: {bilibili_url}")
 
-    # 2. 自动归类
-    category = classify_category(ISSUE_TITLE, ISSUE_BODY)
-    print(f"📂 自动归类到: {category}")
-
-    # 3. 获取视频元信息
+    # 2. 获取视频元信息
     print("🔍 获取 B 站视频信息...")
     try:
         video_info = check_bilibili_video(bilibili_url)
@@ -242,6 +249,10 @@ def main():
     title = video_data.get("title") or ISSUE_TITLE.replace("[求笔记]", "").strip() or "未命名课程"
     part_count = len(video_data.get("parts", []))
     print(f"📹 视频标题: {title}{'（合集，共 ' + str(part_count) + 'P）' if part_count else ''}")
+
+    # 3. 自动归类（基于视频真实标题）
+    category = classify_category(title, "")
+    print(f"📂 自动归类到: {category}")
 
     # 4. 构造 process 请求体（参照前端 DashboardHome.vue / MobileHome.vue）
     print("📤 提交处理任务到谛听 AI 云端...")
