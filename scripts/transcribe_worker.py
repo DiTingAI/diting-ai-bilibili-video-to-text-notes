@@ -23,6 +23,12 @@ DITING_API_BASE = os.environ.get("DITING_API_BASE", "https://api.diting.cc")
 DITING_API_KEY = os.environ.get("DITING_API_KEY", "").strip()
 ISSUE_BODY = os.environ.get("ISSUE_BODY", "")
 ISSUE_TITLE = os.environ.get("ISSUE_TITLE", "")
+SELECTED_PAGE = os.environ.get("SELECTED_PAGE", "").strip()  # 指定分P页码，如 "3"
+# 如果环境变量未设置，尝试从 Issue 正文中提取 SELECTED=数字
+if not SELECTED_PAGE:
+    m = re.search(r'SELECTED\s*[=：:]\s*(\d+)', ISSUE_BODY, re.IGNORECASE)
+    if m:
+        SELECTED_PAGE = m.group(1)
 
 # 知识库分类映射：根据标题/标签关键词自动归类
 CATEGORY_KEYWORDS = {
@@ -99,6 +105,12 @@ def extract_bvid(url: str) -> str | None:
     """从 B 站链接中提取 BV 号。"""
     m = re.search(r'/video/(BV[\w]+)', url)
     return m.group(1) if m else None
+
+
+def extract_page_number(url: str) -> int:
+    """从 B 站 URL 中提取 p= 参数，返回页码（从1开始），默认返回 1。"""
+    m = re.search(r'[?&]p=(\d+)', url)
+    return int(m.group(1)) if m else 1
 
 
 # ── API 调用 ──────────────────────────────────────────
@@ -405,22 +417,26 @@ def main():
     is_multi_part = video_data.get("is_multi_part") is True
 
     if parts and (is_collection or is_multi_part):
-        # 合集/多P：取第一P
-        first = parts[0]
-        part_url = clean_url(first.get("url", ""))
+        # 合集/多P：按 SELECTED_PAGE > URL 中的 p= > 默认第1P 选择
+        page_num = int(SELECTED_PAGE) if SELECTED_PAGE.isdigit() else extract_page_number(bilibili_url)
+        # 页码从1开始，列表索引从0开始
+        page_idx = max(0, min(page_num - 1, len(parts) - 1))
+        selected = parts[page_idx]
+        print(f"📌 分P选择: SELECTED_PAGE={SELECTED_PAGE!r}, URL中p={extract_page_number(bilibili_url)}, 最终选第{page_idx + 1}P")
+        part_url = clean_url(selected.get("url", ""))
         video_entry = {
             "url": part_url,
-            "thumbnail": clean_url(first.get("thumbnail") or video_data.get("thumbnail", "")),
-            "title": first.get("title") or video_data.get("title", ""),
-            "duration": first.get("duration") or video_data.get("duration", "0:00"),
-            "cid": first.get("cid"),
-            "aid": first.get("aid"),
+            "thumbnail": clean_url(selected.get("thumbnail") or video_data.get("thumbnail", "")),
+            "title": selected.get("title") or video_data.get("title", ""),
+            "duration": selected.get("duration") or video_data.get("duration", "0:00"),
+            "cid": selected.get("cid"),
+            "aid": selected.get("aid"),
             "season_id": video_data.get("season_id", 0) if is_collection else 0,
             "total_pages": 1,
-            "pubdate": first.get("pubdate", 0),
+            "pubdate": selected.get("pubdate", 0),
         }
         videos_payload.append(video_entry)
-        print(f"📦 检测到合集/多P，先处理第 1P: {first.get('title', '')}")
+        print(f"📦 检测到合集/多P（共{len(parts)}P），处理第 {page_idx + 1}P: {selected.get('title', '')}")
     else:
         # 单视频
         videos_payload.append({
