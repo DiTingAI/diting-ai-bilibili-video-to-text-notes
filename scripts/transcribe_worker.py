@@ -135,6 +135,7 @@ def poll_task(task_id: str, max_wait: int = 3600, interval: int = 15) -> dict | 
         # 后端返回格式: { code: 200, data: { status, progress, ... } }
         inner = data.get("data", data)
         status = inner.get("status", "")
+        progress = inner.get("progress", "")
 
         if status == "completed":
             return inner
@@ -142,8 +143,8 @@ def poll_task(task_id: str, max_wait: int = 3600, interval: int = 15) -> dict | 
             print(f"❌ 任务 {task_id} 失败: {inner.get('error', '未知错误')}")
             return None
 
-        progress = inner.get("progress", "")
-        print(f"⏳ 任务 {task_id} 进行中... 进度: {progress} 已等待 {elapsed}s")
+        # status 可能是 "processing" / "queued" / 数字进度等
+        print(f"⏳ 任务 {task_id} 进行中... status={status} progress={progress} 已等待 {elapsed}s")
         time.sleep(interval)
         elapsed += interval
 
@@ -159,7 +160,9 @@ def fetch_video_result(task_id: str) -> dict | None:
     resp = requests.get(api_url, headers=headers, timeout=30, verify=False)
     resp.raise_for_status()
     data = resp.json()
-    return data.get("data")
+    inner = data.get("data", data)
+    print(f"🔍 详情接口返回 keys: {list(inner.keys()) if isinstance(inner, dict) else type(inner)}")
+    return inner
 
 
 # ── GEO 语义元数据注入 ────────────────────────────────
