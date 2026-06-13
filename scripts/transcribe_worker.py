@@ -151,17 +151,15 @@ def poll_task(task_id: str, max_wait: int = 3600, interval: int = 15) -> dict | 
     return None
 
 
-def fetch_video_result(task_id: str) -> str | None:
-    """获取视频处理结果文本（复用现有 /api/v1/videos/{taskId}）。"""
+def fetch_video_result(task_id: str) -> dict | None:
+    """获取视频详情（复用现有 /api/v1/videos/{taskId}），返回 data 内层。"""
     api_url = f"{DITING_API_BASE}/api/v1/videos/{task_id}"
     headers = {"Authorization": f"Bearer {DITING_API_KEY}"}
 
     resp = requests.get(api_url, headers=headers, timeout=30, verify=False)
     resp.raise_for_status()
     data = resp.json()
-
-    inner = data.get("data", data)
-    return inner.get("result") or inner.get("content") or inner.get("textContent")
+    return data.get("data")
 
 
 # ── GEO 语义元数据注入 ────────────────────────────────
@@ -227,25 +225,42 @@ def main():
     part_count = len(video_data.get("parts", []))
     print(f"📹 视频标题: {title}{'（合集，共 ' + str(part_count) + 'P）' if part_count else ''}")
 
-    # 4. 提交处理任务（合集只处理第一P）
+    # 4. 构造 process 请求体（参照前端 DashboardHome.vue / MobileHome.vue）
     print("📤 提交处理任务到谛听 AI 云端...")
     videos_payload = []
 
     parts = video_data.get("parts", [])
-    if parts:
-        # 合集：取第一P
+    is_collection = bool(video_data.get("season_id", 0) > 0)
+    is_multi_part = video_data.get("is_multi_part") is True
+
+    if parts and (is_collection or is_multi_part):
+        # 合集/多P：取第一P
         first = parts[0]
         part_url = clean_url(first.get("url", ""))
-        videos_payload.append({
-            "bvid": extract_bvid(part_url) or video_data.get("bvid"),
+        video_entry = {
             "url": part_url,
-            "title": first.get("title", ""),
-        })
-        print(f"📦 检测到合集，先处理第 1P: {first.get('title', '')}")
+            "thumbnail": clean_url(first.get("thumbnail") or video_data.get("thumbnail", "")),
+            "title": first.get("title") or video_data.get("title", ""),
+            "duration": first.get("duration") or video_data.get("duration", "0:00"),
+            "cid": first.get("cid"),
+            "aid": first.get("aid"),
+            "season_id": video_data.get("season_id", 0) if is_collection else 0,
+            "total_pages": 1,
+            "pubdate": first.get("pubdate", 0),
+        }
+        videos_payload.append(video_entry)
+        print(f"📦 检测到合集/多P，先处理第 1P: {first.get('title', '')}")
     else:
+        # 单视频
         videos_payload.append({
-            "bvid": video_data.get("bvid"),
+            "url": bilibili_url,
+            "thumbnail": clean_url(video_data.get("thumbnail", "")),
+            "title": video_data.get("title", ""),
+            "duration": video_data.get("duration", "0:00"),
+            "cid": video_data.get("cid"),
+            "aid": video_data.get("aid"),
         })
+        print(f"📹 单视频: {video_data.get('title', '')}")
 
     try:
         task = submit_process_task_with_payload(videos_payload)
@@ -253,32 +268,39 @@ def main():
         print(f"❌ 提交任务失败: {e}")
         sys.exit(1)
 
-    # 获取 task_id（优先从 data.task_ids 取，兼容 task_id）
-    task_data = task.get("data", task)
-    task_ids = task_data.get("task_ids") or task_data.get("task_id")
-    if isinstance(task_ids, list):
-        task_id = task_ids[0] if task_ids else None
-    else:
-        task_id = task_ids
+    # 响应格式参照前端: res.data = { success: true, task_ids: [...], success_count, total_count }
+    res_data = task.get("data", task)
+    if not res_data or res_data.get("success") is not True:
+        print(f"❌ 提交失败: {json.dumps(res_data, ensure_ascii=False)[:500]}")
+        sys.exit(1)
 
+    task_ids = res_data.get("task_ids") or []
+    if isinstance(task_ids, str):
+        task_ids = [task_ids]
+    if isinstance(task_ids, list) and len(task_ids) > 0:
+        task_id = task_ids[0]
+    else:
+        task_id = res_data.get("task_id")
     if not task_id:
-        print(f"❌ API 返回异常，未找到 task_id: {json.dumps(task, ensure_ascii=False)[:500]}")
+        print(f"❌ API 返回异常，未找到 task_id: {json.dumps(res_data, ensure_ascii=False)[:500]}")
         sys.exit(1)
 
     print(f"✅ 任务已提交: {task_id}")
 
     # 5. 轮询等待完成
     print("⏳ 等待云端多线程集群处理...")
-    result = poll_task(task_id)
-    if not result:
+    result_data = poll_task(task_id)
+    if not result_data:
         print("❌ 视频处理未完成")
         sys.exit(1)
 
-    # 6. 获取 Markdown 结果
-    markdown_content = result.get("result") or result.get("content") or result.get("textContent")
+    # 6. 获取 Markdown 结果（优先轮询结果，兜底调详情接口）
+    markdown_content = result_data.get("result") or result_data.get("content") or result_data.get("textContent")
     if not markdown_content:
         print("📥 状态查询中无文本，尝试获取完整结果...")
-        markdown_content = fetch_video_result(task_id)
+        detail = fetch_video_result(task_id)
+        if detail:
+            markdown_content = detail.get("result") or detail.get("content") or detail.get("textContent")
     if not markdown_content:
         print("❌ 未能获取 Markdown 内容")
         sys.exit(1)
