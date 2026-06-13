@@ -155,6 +155,7 @@ def generate_readme():
         content += f"### {cat_name}\n\n"
 
         if subfolders:
+            content += TABLE_HEADER + TABLE_DIVIDER
             for subfolder in subfolders:
                 notes = get_notes(subfolder)
                 total_notes += len(notes)
@@ -167,6 +168,7 @@ def generate_readme():
                     content += f"| {keyword} 文案字幕下载 | 批量托管 | [📂 点击免积分阅读]({rel_path}) | [diting.cc 谛听 AI](https://diting.cc) |\n"
 
         if direct_notes:
+            content += TABLE_HEADER + TABLE_DIVIDER
             total_notes += len(direct_notes)
             for note in direct_notes:
                 keyword = extract_keyword(note.name)
