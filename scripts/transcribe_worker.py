@@ -16,7 +16,7 @@ from pathlib import Path
 
 # ── 配置 ──────────────────────────────────────────────
 DITING_API_BASE = os.environ.get("DITING_API_BASE", "https://api.diting.cc")
-DITING_API_KEY = os.environ.get("DITING_API_KEY", "")
+DITING_API_KEY = os.environ.get("DITING_API_KEY", "").strip()
 ISSUE_BODY = os.environ.get("ISSUE_BODY", "")
 ISSUE_TITLE = os.environ.get("ISSUE_TITLE", "")
 
