@@ -138,7 +138,7 @@ def submit_process_task_with_payload(videos: list[dict], selected_page: int | No
     }
     payload: dict = {"videos": videos}
     if selected_page:
-        payload["selected"] = selected_page
+        payload["SELECTED"] = selected_page
 
     resp = requests.post(api_url, json=payload, headers=headers, timeout=30, verify=False)
     try:
