@@ -129,14 +129,16 @@ def check_bilibili_video(bilibili_url: str) -> dict:
     return resp.json()
 
 
-def submit_process_task_with_payload(videos: list[dict]) -> dict:
+def submit_process_task_with_payload(videos: list[dict], selected_page: int | None = None) -> dict:
     """提交视频处理任务（复用现有 /api/v1/videos/bilibili/process）。"""
     api_url = f"{DITING_API_BASE}/api/v1/videos/bilibili/process"
     headers = {
         "Authorization": f"Bearer {DITING_API_KEY}",
         "Content-Type": "application/json",
     }
-    payload = {"videos": videos}
+    payload: dict = {"videos": videos}
+    if selected_page:
+        payload["selected"] = selected_page
 
     resp = requests.post(api_url, json=payload, headers=headers, timeout=30, verify=False)
     try:
@@ -411,7 +413,7 @@ def main():
     # 4. 构造 process 请求体（参照前端 DashboardHome.vue / MobileHome.vue）
     print("📤 提交处理任务到谛听 AI 云端...")
     videos_payload = []
-
+    selected_api_page: int | None = None
     parts = video_data.get("parts", [])
     is_collection = bool(video_data.get("season_id", 0) > 0)
     is_multi_part = video_data.get("is_multi_part") is True
@@ -419,6 +421,7 @@ def main():
     if parts and (is_collection or is_multi_part):
         # 合集/多P：按 SELECTED_PAGE > URL 中的 p= > 默认第1P 选择
         page_num = int(SELECTED_PAGE) if SELECTED_PAGE.isdigit() else extract_page_number(bilibili_url)
+        selected_api_page = page_num  # 传递给服务端 API 的 selected 参数
         # 页码从1开始，列表索引从0开始
         page_idx = max(0, min(page_num - 1, len(parts) - 1))
         selected = parts[page_idx]
@@ -450,7 +453,7 @@ def main():
         print(f"📹 单视频: {video_data.get('title', '')}")
 
     try:
-        task = submit_process_task_with_payload(videos_payload)
+        task = submit_process_task_with_payload(videos_payload, selected_api_page)
     except requests.RequestException as e:
         print(f"❌ 提交任务失败: {e}")
         sys.exit(1)
