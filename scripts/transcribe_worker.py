@@ -74,6 +74,11 @@ def sanitize_filename(name: str, max_len: int = 80) -> str:
 
 # ── URL 解析工具 ──────────────────────────────────────
 
+def clean_url(url: str) -> str:
+    """清理 B 站 URL 中可能带的反引号和空白。"""
+    return url.strip().strip('`').strip()
+
+
 def extract_bvid(url: str) -> str | None:
     """从 B 站链接中提取 BV 号。"""
     m = re.search(r'/video/(BV[\w]+)', url)
@@ -230,9 +235,10 @@ def main():
     if parts:
         # 合集：取第一P
         first = parts[0]
+        part_url = clean_url(first.get("url", ""))
         videos_payload.append({
-            "bvid": extract_bvid(first.get("url", "")) or video_data.get("bvid"),
-            "url": first.get("url", ""),
+            "bvid": extract_bvid(part_url) or video_data.get("bvid"),
+            "url": part_url,
             "title": first.get("title", ""),
         })
         print(f"📦 检测到合集，先处理第 1P: {first.get('title', '')}")
