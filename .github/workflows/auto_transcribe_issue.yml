@@ -28,7 +28,6 @@ jobs:
           ISSUE_BODY: ${{ github.event.issue.body }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
-          SELECTED_PAGE: ${{ github.event.inputs.selected_page || '' }}
         run: |
           pip install requests
           python scripts/transcribe_worker.py
