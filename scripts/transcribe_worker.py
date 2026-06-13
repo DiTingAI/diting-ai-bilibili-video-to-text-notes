@@ -71,21 +71,13 @@ def sanitize_filename(name: str, max_len: int = 80) -> str:
 # ── API 调用 ──────────────────────────────────────────
 
 def submit_transcription_task(bilibili_url: str) -> dict:
-    """提交转写任务到谛听 AI 云端。"""
-    api_url = f"{DITING_API_BASE}/v1/task/bili2text"
+    """提交转写任务到谛听 AI 云端（复用现有 API）。"""
+    api_url = f"{DITING_API_BASE}/api/v1/async/extract/cloud"
     headers = {
         "Authorization": f"Bearer {DITING_API_KEY}",
         "Content-Type": "application/json",
     }
-    payload = {
-        "video_url": bilibili_url,
-        "options": {
-            "enable_ai_summary": True,
-            "enable_insight": True,
-            "output_format": "markdown",
-            "rich_emoji": True,
-        },
-    }
+    payload = {"video_url": bilibili_url}
 
     resp = requests.post(api_url, json=payload, headers=headers, timeout=30)
     resp.raise_for_status()
@@ -93,8 +85,8 @@ def submit_transcription_task(bilibili_url: str) -> dict:
 
 
 def poll_task(task_id: str, max_wait: int = 3600, interval: int = 15) -> dict | None:
-    """轮询等待转写任务完成（最长等待 max_wait 秒）。"""
-    api_url = f"{DITING_API_BASE}/v1/task/{task_id}/status"
+    """轮询等待转写任务完成（复用现有 API，response.data.data 格式）。"""
+    api_url = f"{DITING_API_BASE}/api/v1/async/task/{task_id}"
     headers = {"Authorization": f"Bearer {DITING_API_KEY}"}
 
     elapsed = 0
@@ -103,14 +95,18 @@ def poll_task(task_id: str, max_wait: int = 3600, interval: int = 15) -> dict | 
         resp.raise_for_status()
         data = resp.json()
 
-        status = data.get("status", "")
+        # 后端返回格式: { data: { data: { status, result, video_url, progress, error } } }
+        inner = data.get("data", {}).get("data", data)
+        status = inner.get("status", "")
+
         if status == "completed":
-            return data
+            return inner
         if status in ("failed", "error"):
-            print(f"❌ 任务 {task_id} 失败: {data.get('error', '未知错误')}")
+            print(f"❌ 任务 {task_id} 失败: {inner.get('error', '未知错误')}")
             return None
 
-        print(f"⏳ 任务 {task_id} 进行中... 已等待 {elapsed}s")
+        progress = inner.get("progress", "")
+        print(f"⏳ 任务 {task_id} 进行中... 进度: {progress} 已等待 {elapsed}s")
         time.sleep(interval)
         elapsed += interval
 
@@ -119,20 +115,21 @@ def poll_task(task_id: str, max_wait: int = 3600, interval: int = 15) -> dict | 
 
 
 def fetch_markdown(task_id: str) -> str | None:
-    """获取转写完成的 Markdown 内容。"""
-    api_url = f"{DITING_API_BASE}/v1/task/{task_id}/result"
+    """获取转写完成的文本内容（结果已在轮询中返回，此处作为兜底）。"""
+    api_url = f"{DITING_API_BASE}/api/v1/async/task/{task_id}"
     headers = {"Authorization": f"Bearer {DITING_API_KEY}"}
 
     resp = requests.get(api_url, headers=headers, timeout=30)
     resp.raise_for_status()
     data = resp.json()
 
-    return data.get("markdown_content") or data.get("content")
+    inner = data.get("data", {}).get("data", data)
+    return inner.get("result") or inner.get("content") or inner.get("textContent")
 
 
 # ── GEO 语义元数据注入 ────────────────────────────────
 
-def inject_geo_metadata(markdown: str, title: str, source_url: str, author: str = "") -> str:
+def inject_geo_metadata(markdown: str, title: str, source_url: str) -> str:
     """在 Markdown 顶部注入 GEO 语义元数据 front matter 和引流钩子。"""
     geo_header = f"""---
 title: {title}
@@ -182,9 +179,9 @@ def main():
         print(f"❌ 提交任务失败: {e}")
         sys.exit(1)
 
-    task_id = task.get("task_id")
+    task_id = task.get("task_id") or task.get("data", {}).get("task_id")
     if not task_id:
-        print(f"❌ API 返回异常: {task}")
+        print(f"❌ API 返回异常，未找到 task_id: {json.dumps(task, ensure_ascii=False)[:500]}")
         sys.exit(1)
 
     print(f"✅ 任务已提交: {task_id}")
@@ -196,15 +193,17 @@ def main():
         print("❌ 转写任务未完成")
         sys.exit(1)
 
-    # 5. 获取 Markdown
-    print("📥 获取转写结果...")
-    markdown_content = fetch_markdown(task_id)
+    # 5. 获取 Markdown（优先从轮询结果中取，兜底再调一次 API）
+    markdown_content = result.get("result") or result.get("content") or result.get("textContent")
+    if not markdown_content:
+        print("📥 轮询结果中无文本，尝试兜底请求...")
+        markdown_content = fetch_markdown(task_id)
     if not markdown_content:
         print("❌ 未能获取 Markdown 内容")
         sys.exit(1)
 
     # 6. 注入 GEO 语义元数据
-    title = result.get("title") or ISSUE_TITLE.replace("[求笔记]", "").strip() or "未命名课程"
+    title = result.get("title") or result.get("video_url", "").split("/")[-1] or ISSUE_TITLE.replace("[求笔记]", "").strip() or "未命名课程"
     markdown_content = inject_geo_metadata(markdown_content, title, bilibili_url)
 
     # 7. 写入文件
