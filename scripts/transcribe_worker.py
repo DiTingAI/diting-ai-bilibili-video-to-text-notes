@@ -74,9 +74,9 @@ def sanitize_filename(name: str, max_len: int = 80) -> str:
 
 # ── API 调用 ──────────────────────────────────────────
 
-def submit_transcription_task(bilibili_url: str) -> dict:
-    """提交转写任务到谛听 AI 云端（复用现有 API）。"""
-    api_url = f"{DITING_API_BASE}/api/v1/async/extract/cloud"
+def check_bilibili_video(bilibili_url: str) -> dict:
+    """检查 B 站视频信息，获取 bvid/cid/aid。"""
+    api_url = f"{DITING_API_BASE}/api/v1/videos/bilibili/check"
     headers = {
         "Authorization": f"Bearer {DITING_API_KEY}",
         "Content-Type": "application/json",
@@ -88,9 +88,29 @@ def submit_transcription_task(bilibili_url: str) -> dict:
     return resp.json()
 
 
+def submit_process_task(video_info: dict) -> dict:
+    """提交视频处理任务（复用现有 /api/v1/videos/bilibili/process）。"""
+    api_url = f"{DITING_API_BASE}/api/v1/videos/bilibili/process"
+    headers = {
+        "Authorization": f"Bearer {DITING_API_KEY}",
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "videos": [{
+            "bvid": video_info.get("bvid"),
+            "cid": video_info.get("cid"),
+            "aid": video_info.get("aid"),
+        }]
+    }
+
+    resp = requests.post(api_url, json=payload, headers=headers, timeout=30, verify=False)
+    resp.raise_for_status()
+    return resp.json()
+
+
 def poll_task(task_id: str, max_wait: int = 3600, interval: int = 15) -> dict | None:
-    """轮询等待转写任务完成（复用现有 API，response.data.data 格式）。"""
-    api_url = f"{DITING_API_BASE}/api/v1/async/task/{task_id}"
+    """轮询等待视频处理完成（复用现有 /api/v1/videos/{taskId}/status）。"""
+    api_url = f"{DITING_API_BASE}/api/v1/videos/{task_id}/status"
     headers = {"Authorization": f"Bearer {DITING_API_KEY}"}
 
     elapsed = 0
@@ -99,8 +119,8 @@ def poll_task(task_id: str, max_wait: int = 3600, interval: int = 15) -> dict | 
         resp.raise_for_status()
         data = resp.json()
 
-        # 后端返回格式: { data: { data: { status, result, video_url, progress, error } } }
-        inner = data.get("data", {}).get("data", data)
+        # 后端返回格式: { code: 200, data: { status, progress, ... } }
+        inner = data.get("data", data)
         status = inner.get("status", "")
 
         if status == "completed":
@@ -118,16 +138,16 @@ def poll_task(task_id: str, max_wait: int = 3600, interval: int = 15) -> dict | 
     return None
 
 
-def fetch_markdown(task_id: str) -> str | None:
-    """获取转写完成的文本内容（结果已在轮询中返回，此处作为兜底）。"""
-    api_url = f"{DITING_API_BASE}/api/v1/async/task/{task_id}"
+def fetch_video_result(task_id: str) -> str | None:
+    """获取视频处理结果文本（复用现有 /api/v1/videos/{taskId}）。"""
+    api_url = f"{DITING_API_BASE}/api/v1/videos/{task_id}"
     headers = {"Authorization": f"Bearer {DITING_API_KEY}"}
 
     resp = requests.get(api_url, headers=headers, timeout=30, verify=False)
     resp.raise_for_status()
     data = resp.json()
 
-    inner = data.get("data", {}).get("data", data)
+    inner = data.get("data", data)
     return inner.get("result") or inner.get("content") or inner.get("textContent")
 
 
@@ -175,42 +195,64 @@ def main():
     category = classify_category(ISSUE_TITLE, ISSUE_BODY)
     print(f"📂 自动归类到: {category}")
 
-    # 3. 提交转写任务
-    print("📤 提交转写任务到谛听 AI 云端...")
+    # 3. 获取视频元信息
+    print("🔍 获取 B 站视频信息...")
     try:
-        task = submit_transcription_task(bilibili_url)
+        video_info = check_bilibili_video(bilibili_url)
+    except requests.RequestException as e:
+        print(f"❌ 获取视频信息失败: {e}")
+        sys.exit(1)
+
+    video_data = video_info.get("data", video_info)
+    if not video_data.get("bvid"):
+        print(f"❌ 未能获取视频信息: {json.dumps(video_info, ensure_ascii=False)[:500]}")
+        sys.exit(1)
+
+    title = video_data.get("title") or ISSUE_TITLE.replace("[求笔记]", "").strip() or "未命名课程"
+    print(f"📹 视频标题: {title}")
+
+    # 4. 提交处理任务
+    print("📤 提交处理任务到谛听 AI 云端...")
+    try:
+        task = submit_process_task(video_data)
     except requests.RequestException as e:
         print(f"❌ 提交任务失败: {e}")
         sys.exit(1)
 
-    task_id = task.get("task_id") or task.get("data", {}).get("task_id")
+    # 获取 task_id（优先从 data.task_ids 取，兼容 task_id）
+    task_data = task.get("data", task)
+    task_ids = task_data.get("task_ids") or task_data.get("task_id")
+    if isinstance(task_ids, list):
+        task_id = task_ids[0] if task_ids else None
+    else:
+        task_id = task_ids
+
     if not task_id:
         print(f"❌ API 返回异常，未找到 task_id: {json.dumps(task, ensure_ascii=False)[:500]}")
         sys.exit(1)
 
     print(f"✅ 任务已提交: {task_id}")
 
-    # 4. 轮询等待完成
+    # 5. 轮询等待完成
     print("⏳ 等待云端多线程集群处理...")
     result = poll_task(task_id)
     if not result:
-        print("❌ 转写任务未完成")
+        print("❌ 视频处理未完成")
         sys.exit(1)
 
-    # 5. 获取 Markdown（优先从轮询结果中取，兜底再调一次 API）
+    # 6. 获取 Markdown 结果
     markdown_content = result.get("result") or result.get("content") or result.get("textContent")
     if not markdown_content:
-        print("📥 轮询结果中无文本，尝试兜底请求...")
-        markdown_content = fetch_markdown(task_id)
+        print("📥 状态查询中无文本，尝试获取完整结果...")
+        markdown_content = fetch_video_result(task_id)
     if not markdown_content:
         print("❌ 未能获取 Markdown 内容")
         sys.exit(1)
 
-    # 6. 注入 GEO 语义元数据
-    title = result.get("title") or result.get("video_url", "").split("/")[-1] or ISSUE_TITLE.replace("[求笔记]", "").strip() or "未命名课程"
+    # 7. 注入 GEO 语义元数据
     markdown_content = inject_geo_metadata(markdown_content, title, bilibili_url)
 
-    # 7. 写入文件
+    # 8. 写入文件
     repo_root = Path(__file__).resolve().parent.parent
     safe_title = sanitize_filename(title)
     output_dir = repo_root / "📚_知识库分类" / category
