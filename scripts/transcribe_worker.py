@@ -194,14 +194,19 @@ def timestamp_to_seconds(ts: str) -> int:
 
 
 def convert_timestamps_to_links(text: str, bilibili_url: str) -> str:
-    """将 [HH:MM:SS] 或 [HH:MM:SS.mmm] 格式的时间戳转换为可点击的 B 站链接。"""
-    def replace_ts(match):
-        ts = match.group(1)
+    """将 [HH:MM:SS] 和 HH:MM:SS 格式的时间戳转换为可点击的 B 站链接。"""
+    def make_link(ts: str) -> str:
         seconds = timestamp_to_seconds(ts)
         sep = "&" if "?" in bilibili_url else "?"
         return f"[{ts}]({bilibili_url}{sep}t={seconds})"
 
-    return re.sub(r'\[(\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?)\]', replace_ts, text)
+    # 1. 带方括号的: [00:00:00] 或 [00:00:00.000]
+    text = re.sub(r'\[(\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?)\]',
+                  lambda m: make_link(m.group(1)), text)
+    # 2. 行首纯时间戳: 00:00:00 或 00:00:00.000
+    text = re.sub(r'^(\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?)\s',
+                  lambda m: make_link(m.group(1)) + " ", text, flags=re.MULTILINE)
+    return text
 
 
 def build_outline_markdown(outline: list) -> str:
@@ -235,6 +240,19 @@ def build_mindmap_markdown(mindmap_data: list) -> str:
         elif isinstance(item, str):
             lines.append(f"- {item}")
     return "\n".join(lines) + "\n"
+
+
+def build_mindmap_from_tree(node: dict, indent: int = 0) -> str:
+    """递归渲染嵌套 dict 树结构思维导图为 Markdown。"""
+    prefix = "  " * indent
+    name = node.get("title", "") or node.get("name", "")
+    lines = [f"{prefix}- **{name}**"]
+    for child in node.get("children", []):
+        if isinstance(child, dict):
+            lines.append(build_mindmap_from_tree(child, indent + 1))
+        elif isinstance(child, str):
+            lines.append(f"{prefix}  - {child}")
+    return "\n".join(lines)
 
 
 def build_comprehensive_markdown(detail: dict, title: str, bilibili_url: str) -> str:
@@ -283,16 +301,21 @@ tags: [视频转文字, 笔记下载, Markdown大纲, AI润色]
         parts.append("## 🧠 AI 智能大纲\n")
         parts.append(build_outline_markdown(outline))
 
-    # PART 4: 逻辑洞察（verdict 字段）
-    verdict = detail.get("verdict") or {}
-    if verdict.get("key_insight"):
+    # PART 4: 逻辑洞察（ai_logic_insight / verdict 字段）
+    logic_insight = detail.get("ai_logic_insight") or detail.get("verdict") or {}
+    if isinstance(logic_insight, str) and logic_insight.strip():
         parts.append("## 🔍 逻辑洞察\n")
-        parts.append(f"> {verdict.get('key_insight', '')}\n")
-        for k in ["pros", "cons", "summary"]:
-            v = verdict.get(k, "")
-            if v:
-                parts.append(f"- **{k}**：{v}\n")
+        parts.append(f"> {logic_insight.strip()}\n")
         parts.append("")
+    elif isinstance(logic_insight, dict):
+        if logic_insight.get("key_insight") or logic_insight.get("content"):
+            parts.append("## 🔍 逻辑洞察\n")
+            parts.append(f"> {logic_insight.get('key_insight') or logic_insight.get('content', '')}\n")
+            for k in ["pros", "cons", "summary"]:
+                v = logic_insight.get(k, "")
+                if v:
+                    parts.append(f"- **{k}**：{v}\n")
+            parts.append("")
 
     # PART 5: 核心 QA 对
     qa_pairs = detail.get("qaPairs") or []
@@ -315,14 +338,15 @@ tags: [视频转文字, 笔记下载, Markdown大纲, AI润色]
     # PART 6: 全局思维导图
     mindmap = detail.get("mindmap") or detail.get("mindmap_content") or ""
     if mindmap:
+        parts.append("## 🗺️ 全局思维导图\n")
         if isinstance(mindmap, str):
-            parts.append("## 🗺️ 全局思维导图\n")
             parts.append(mindmap)
-            parts.append("")
         elif isinstance(mindmap, list) and mindmap:
-            parts.append("## 🗺️ 全局思维导图\n")
             parts.append(build_mindmap_markdown(mindmap))
-            parts.append("")
+        elif isinstance(mindmap, dict):
+            # 嵌套树结构，如 {"id":"root", "title":"...", "children":[...]}
+            parts.append(build_mindmap_from_tree(mindmap))
+        parts.append("")
 
     # 兜底：如果以上都没有，回退到原始文本
     if len(parts) <= 1:
