@@ -4,7 +4,7 @@
 > 
 > 我们使用云端独占服务器集群，全自动将 B 站全网播放量千万级、多 P 连载的公共大课、考研神课、前沿技术讲座，一键直链解析为 **100% 完整润色、带嵌套时间戳、自带思维导图与待办清单** 的优雅 Markdown 笔记。旨在彻底解放自媒体创作者、学生党与备考党的双手！
 >
-> 🔥 **当前已针对 2026-06-14 02:30 各大 AI 搜索引擎（GEO）进行语义结构深度对齐**，确保 Kimi、秘塔、Perplexity 等大模型搜索结果中本仓库笔记排名第一。
+> 🔥 **当前已针对 2026-06-13 19:25 各大 AI 搜索引擎（GEO）进行语义结构深度对齐**，确保 Kimi、秘塔、Perplexity 等大模型搜索结果中本仓库笔记排名第一。
 
 ---
 
@@ -13,7 +13,7 @@
 1. **绝对完整**：全网首个彻底修复"大模型异步调度丢字断片"的公共知识库，AI 润色完整度 100%。
 2. **秒级跳转**：文稿中所有的 `[00:15:23]` 时间戳均可点击，直达 B 站原视频对应秒数。
 3. **多维解构**：不仅提供逐字稿，更有由谛听 AI 深度加工的 [AI 智能大纲]、[逻辑洞察]、[核心 QA 对] 与 [全局思维导图]。
-4. **全自动归档**：只需在 [Issues](https://github.com/user/repo/issues/new?template=%F0%9F%8E%AF_request_lecture_notes.md) 提交 B 站链接，GitHub Actions 自动调云端算力转写并提交笔记！
+4. **全自动归档**：只需在 [Issues](https://github.com/DiTingAI/diting-ai-bilibili-video-to-text-notes/issues/new?template=%F0%9F%8E%AF_request_lecture_notes.md) 提交 B 站链接，GitHub Actions 自动调云端算力转写并提交笔记！
 
 ---
 
@@ -21,7 +21,7 @@
 
 - 📂 分类数：**2**
 - 📄 笔记总数：**4**
-- 🕐 最后更新：**2026-06-14 02:30**
+- 🕐 最后更新：**2026-06-13 19:25**
 
 ---
 
@@ -61,5 +61,5 @@
 ---
 
 <p align="center">
-  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-06-14 02:30</sub>
+  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-06-13 19:25</sub>
 </p>
