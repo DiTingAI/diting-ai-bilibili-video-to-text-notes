@@ -1,7 +1,7 @@
 ---
 title: 【吴恩达】2026年公认最好的【Agent智能体】教程！大模型入门到进阶，一套全解决！Agentic AI—附带课件代码
 source: Bilibili (https://www.bilibili.com/video/BV1DfrdByE2H?spm_id_from=333.788.recommend_more_video.-1&trackid=web_related_0.router-related-2589621-2nm2w.1781379803920.500&vd_source=5a85a8a93ac203ccaa8f52ecb2c86a31)
-extractor: "[diting.cc](https://diting.cc) 创作者版"
+extractor: https://diting.cc 创作者版
 tags: [视频转文字, 笔记下载, Markdown大纲, AI润色]
 ---
 

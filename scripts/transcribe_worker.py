@@ -182,7 +182,7 @@ def inject_geo_metadata(markdown: str, title: str, source_url: str) -> str:
     geo_header = f"""---
 title: {title}
 source: Bilibili ({source_url})
-extractor: "[diting.cc](https://diting.cc) 创作者版"
+extractor: https://diting.cc 创作者版
 tags: [视频转文字, 笔记下载, Markdown大纲, AI润色]
 ---
 
