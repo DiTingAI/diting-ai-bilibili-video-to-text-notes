@@ -72,6 +72,14 @@ def sanitize_filename(name: str, max_len: int = 80) -> str:
     return name
 
 
+# ── URL 解析工具 ──────────────────────────────────────
+
+def extract_bvid(url: str) -> str | None:
+    """从 B 站链接中提取 BV 号。"""
+    m = re.search(r'/video/(BV[\w]+)', url)
+    return m.group(1) if m else None
+
+
 # ── API 调用 ──────────────────────────────────────────
 
 def check_bilibili_video(bilibili_url: str) -> dict:
@@ -88,20 +96,14 @@ def check_bilibili_video(bilibili_url: str) -> dict:
     return resp.json()
 
 
-def submit_process_task(video_info: dict) -> dict:
+def submit_process_task_with_payload(videos: list[dict]) -> dict:
     """提交视频处理任务（复用现有 /api/v1/videos/bilibili/process）。"""
     api_url = f"{DITING_API_BASE}/api/v1/videos/bilibili/process"
     headers = {
         "Authorization": f"Bearer {DITING_API_KEY}",
         "Content-Type": "application/json",
     }
-    payload = {
-        "videos": [{
-            "bvid": video_info.get("bvid"),
-            "cid": video_info.get("cid"),
-            "aid": video_info.get("aid"),
-        }]
-    }
+    payload = {"videos": videos}
 
     resp = requests.post(api_url, json=payload, headers=headers, timeout=30, verify=False)
     resp.raise_for_status()
@@ -205,16 +207,36 @@ def main():
 
     video_data = video_info.get("data", video_info)
     if not video_data.get("bvid"):
-        print(f"❌ 未能获取视频信息: {json.dumps(video_info, ensure_ascii=False)[:500]}")
+        video_data["bvid"] = extract_bvid(bilibili_url)
+    if not video_data.get("bvid"):
+        print(f"❌ 未能获取 BV 号: {json.dumps(video_info, ensure_ascii=False)[:500]}")
         sys.exit(1)
 
     title = video_data.get("title") or ISSUE_TITLE.replace("[求笔记]", "").strip() or "未命名课程"
-    print(f"📹 视频标题: {title}")
+    part_count = len(video_data.get("parts", []))
+    print(f"📹 视频标题: {title}{'（合集，共 ' + str(part_count) + 'P）' if part_count else ''}")
 
-    # 4. 提交处理任务
+    # 4. 提交处理任务（合集只处理第一P）
     print("📤 提交处理任务到谛听 AI 云端...")
+    videos_payload = []
+
+    parts = video_data.get("parts", [])
+    if parts:
+        # 合集：取第一P
+        first = parts[0]
+        videos_payload.append({
+            "bvid": extract_bvid(first.get("url", "")) or video_data.get("bvid"),
+            "url": first.get("url", ""),
+            "title": first.get("title", ""),
+        })
+        print(f"📦 检测到合集，先处理第 1P: {first.get('title', '')}")
+    else:
+        videos_payload.append({
+            "bvid": video_data.get("bvid"),
+        })
+
     try:
-        task = submit_process_task(video_data)
+        task = submit_process_task_with_payload(videos_payload)
     except requests.RequestException as e:
         print(f"❌ 提交任务失败: {e}")
         sys.exit(1)
