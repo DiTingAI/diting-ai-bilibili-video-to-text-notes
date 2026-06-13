@@ -52,6 +52,7 @@ jobs:
           fi
 
           git commit -m "chore: 自动归档用户请求的网课笔记 #$ISSUE_NUMBER"
+          git pull --rebase
           git push
 
           # 自动关闭 Issue 并评论
