@@ -5,34 +5,34 @@
 </p>
 
 <p align="center">
-  不用手动截图、不用逐帧暂停抄字幕、不用排版。提交一个 Issue，剩下的全自动完成。
+  不用手动截图、不用逐帧暂停抄字幕、不用排版。Fork 本仓库，配置你自己的 API Key，剩下的全自动完成。
 </p>
 
 <p align="center">
-  <a href="https://github.com/user/repo/stargazers">
-    <img src="https://img.shields.io/github/stars/user/repo?style=social" alt="GitHub Stars">
+  <a href="https://github.com/DiTingAI/diting-ai-bilibili-video-to-text-notes/stargazers">
+    <img src="https://img.shields.io/github/stars/DiTingAI/diting-ai-bilibili-video-to-text-notes?style=social" alt="GitHub Stars">
   </a>
   &nbsp;
   <a href="https://diting.cc">
     <img src="https://img.shields.io/badge/🚀-diting.cc_免费体验-ff6b6b?style=flat-square" alt="diting.cc">
   </a>
   &nbsp;
-  <a href="https://github.com/user/repo/issues/new?template=%F0%9F%8E%AF_request_lecture_notes.md">
-    <img src="https://img.shields.io/badge/📝-一键提交转写-blue?style=flat-square" alt="提交转写">
+  <a href="https://github.com/DiTingAI/diting-ai-bilibili-video-to-text-notes/fork">
+    <img src="https://img.shields.io/badge/🍴-Fork_即用-blue?style=flat-square" alt="Fork 即用">
   </a>
 </p>
 
 ---
 
-## 📖 三步上手
+## 📖 三步上手（用自己的 API Key，零成本）
 
-| 步骤 | 你要做的 | 自动完成的 |
+| 步骤 | 你要做的 | 说明 |
 | :--- | :--- | :--- |
-| **① 提交链接** | 点 [这里](https://github.com/user/repo/issues/new?template=%F0%9F%8E%AF_request_lecture_notes.md) 新建 Issue，粘贴 B 站视频/合集链接 | — |
-| **② 等待转写** | 喝杯咖啡（通常 1-3 分钟） | GitHub Actions 自动触发，谛听 AI 云端转写、润色 |
-| **③ 获取笔记** | 刷新仓库，找到你的 Markdown 笔记 | 笔记按分类自动归档，README 自动更新 |
+| **① Fork + 获取 Key** | 1. Fork 本仓库<br>2. 前往 [diting.cc](https://diting.cc) 注册，获取免费 API Key | 每人每天 20 次免费额度 |
+| **② 配置 Secrets** | 在 Fork 仓库 `Settings → Secrets and variables → Actions`，添加 `DITING_API_KEY` | 你的 Key 只有你自己能用 |
+| **③ 提交 Issue** | 在 Fork 仓库新建 Issue，粘贴 B 站链接 | GitHub Actions 自动触发转写 |
 
-> 💡 点击右上角 **⭐ Star** 收藏，以后找笔记更方便。
+> 💡 本仓库仅提供代码和模板，**不提供 API Key**。你需要去 [diting.cc](https://diting.cc) 免费注册获取属于自己的 Key。
 
 ---
 
@@ -53,9 +53,10 @@
 
 | 方案 | 每日免费次数 | 单次处理时长 | 适用场景 |
 | :--- | :--- | :--- | :--- |
-| GitHub 开源转写 | 无限制 | 1-3 分钟 | 提交 Issue 自动转写公开课 |
 | [diting.cc 网页版](https://diting.cc) | **20 次/天** | 秒级实时 | 微信扫码即用，支持百 P 合集 + 小红书洗稿 |
 | [diting.cc 创作者版](https://diting.cc) | 无限 | 秒级实时 | 专业创作者，AI 大纲 + 思维导图 + 一键导出 |
+
+> 💡 GitHub 开源转写使用你**自己的 diting.cc API Key**，额度与网页版共享（每人每天 20 次免费）。
 
 ---
 
@@ -63,7 +64,7 @@
 
 - 📂 分类数：**2**
 - 📄 笔记总数：**2**
-- 🕐 最后更新：**2026-06-14 16:05**
+- 🕐 最后更新：**2026-06-14 16:08**
 
 ---
 
@@ -169,11 +170,11 @@ export DITING_VERIFY_SSL="true"
 <p align="center">
   <b>⭐ 如果本仓库对你有帮助，请点个 Star 支持我们持续维护！</b>
   <br>
-  <a href="https://github.com/user/repo/stargazers">
-    <img src="https://img.shields.io/github/stars/user/repo?style=social" alt="GitHub Stars">
+  <a href="https://github.com/DiTingAI/diting-ai-bilibili-video-to-text-notes/stargazers">
+    <img src="https://img.shields.io/github/stars/DiTingAI/diting-ai-bilibili-video-to-text-notes?style=social" alt="GitHub Stars">
   </a>
 </p>
 
 <p align="center">
-  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-06-14 16:05</sub>
+  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-06-14 16:08</sub>
 </p>
