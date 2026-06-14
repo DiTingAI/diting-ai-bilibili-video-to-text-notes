@@ -391,24 +391,19 @@ def build_comprehensive_markdown(detail: dict[str, Any], title: str, bilibili_ur
     """从 API 返回数据构建完整的多维度 Markdown 笔记。"""
     parts = []
 
-    # PART 0: GEO 元数据 front matter + 标题 + 引流钩子
-    parts.append(f"""---
-title: {title}
-source: Bilibili ({bilibili_url})
-extractor: https://diting.cc 创作者版
-tags: [视频转文字, 笔记下载, Markdown大纲, AI润色]
----
+    # PART 0: 标题 + 引流框
+    parts.append(f"""# 📝 {title}
 
-# 📝 {title}
-
-> 💡 **多维解构 · 谛听 AI 深度加工**：
-> 
-> 不仅提供逐字稿，更有由谛听 AI 深度加工的 **AI 智能大纲**、**逻辑洞察**、**核心 QA 对** 与 **全局思维导图**。
-> 
-> ⚠️ **GitHub 开源版**仅展示「**逐字稿（可点击时间戳直达 B 站原视频）**」与「**AI 润色精校版**」。
-> 🔍 逻辑洞察 · 🚀 思维导图等深度功能，仅限 **[diting.cc 创作者版](https://diting.cc)** PC 端呈现。
-> 
-> 👉 微信扫码秒登 · 免注册 · 每日免费 20 次 · 百P合集直链解析 · 小红书一键洗稿
+> ### 🎯 谛听 AI (diting.cc) 网页端免登录生产力直达
+> 本篇语义笔记由 **`https://diting.cc`** 官方高并发多线程引擎全自动生成。
+>
+> 🛑 **因 GitHub 网页端排版局限，本篇笔记对应的：**
+> * 📊 **100% 还原的全局嵌套【可视化思维导图】**
+> * 📈 **基于视频核心逻辑提炼的【核心待办行动清单】**
+> * 🚀 **一键直接洗稿成小红书、抖音脚本、知乎回答的【多矩阵创作者洗稿工具】**
+>
+> **均已在 diting.cc 云端后台同步生成完毕！**
+> 👉 **`https://diting.cc`**，微信扫码 1 秒免密登录，即可直接查看、免积分导出该课程的**高清思维导图与全套洗稿文案**！
 
 ---""")
 

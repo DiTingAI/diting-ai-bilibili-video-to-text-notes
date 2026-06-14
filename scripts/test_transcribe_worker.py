@@ -478,9 +478,9 @@ class TestBuildComprehensiveMarkdown:
     def test_front_matter(self):
         detail = {}
         result = build_comprehensive_markdown(detail, "标题", self.BASE_URL)
-        assert "---" in result
-        assert "title: 标题" in result
+        assert "# 📝 标题" in result
         assert "diting.cc" in result
+        assert "🎯" in result
 
     def test_empty_detail(self):
         """空的 detail 仍生成 header"""
