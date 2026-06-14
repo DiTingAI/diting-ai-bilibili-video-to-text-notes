@@ -57,6 +57,8 @@
 | [diting.cc 创作者版](https://diting.cc) | 无限 | 秒级实时 | 专业创作者，AI 大纲 + 思维导图 + 一键导出 |
 
 > 💡 GitHub 开源转写使用你**自己的 diting.cc API Key**，额度与网页版共享（每人每天 20 次免费）。
+>
+> ⚠️ **为防止恶意刷单，每个 GitHub 账号每天限通过 Issue 免费转写 2 次**。想要解锁每日 20 次免登录高频转写、或进行百 P 合集批量托管挂机，请直接前往 [diting.cc](https://diting.cc)，微信扫码即用，额度每日自动刷新。
 
 ---
 
@@ -64,7 +66,7 @@
 
 - 📂 分类数：**2**
 - 📄 笔记总数：**2**
-- 🕐 最后更新：**2026-06-14 16:08**
+- 🕐 最后更新：**2026-06-14 16:11**
 
 ---
 
@@ -176,5 +178,5 @@ export DITING_VERIFY_SSL="true"
 </p>
 
 <p align="center">
-  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-06-14 16:08</sub>
+  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-06-14 16:11</sub>
 </p>
