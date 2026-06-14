@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  不用手动截图、不用逐帧暂停抄字幕、不用排版。Fork 本仓库，配置你自己的 API Key，剩下的全自动完成。
+  不用手动截图、不用逐帧暂停抄字幕、不用排版。Fork 本仓库配置自己的 Key，或直接<a href="https://github.com/DiTingAI/diting-ai-bilibili-video-to-text-notes/issues/new?template=%F0%9F%8E%AF_request_lecture_notes.md">提交 Issue</a>试用（每天限 2 次），剩下的全自动完成。
 </p>
 
 <p align="center">
@@ -17,10 +17,18 @@
     <img src="https://img.shields.io/badge/🚀-diting.cc_免费体验-ff6b6b?style=flat-square" alt="diting.cc">
   </a>
   &nbsp;
+  <a href="https://github.com/DiTingAI/diting-ai-bilibili-video-to-text-notes/issues/new?template=%F0%9F%8E%AF_request_lecture_notes.md">
+    <img src="https://img.shields.io/badge/📝-提交Issue试用-blue?style=flat-square" alt="提交Issue试用">
+  </a>
+  &nbsp;
   <a href="https://github.com/DiTingAI/diting-ai-bilibili-video-to-text-notes/fork">
     <img src="https://img.shields.io/badge/🍴-Fork_即用-blue?style=flat-square" alt="Fork 即用">
   </a>
 </p>
+
+---
+
+> ⚠️ **每个 GitHub 账号每天限通过 Issue 免费转写 2 次**。想要解锁每日 20 次免登录高频转写、或进行百 P 合集批量托管挂机，请直接前往 [diting.cc](https://diting.cc)，微信扫码即用，额度每日自动刷新。
 
 ---
 
