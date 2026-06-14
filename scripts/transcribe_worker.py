@@ -519,8 +519,8 @@ def main() -> None:
         print("❌ 未设置 DITING_API_KEY 环境变量")
         sys.exit(1)
 
-    # SSL 验证：默认开启，可通过 DITING_VERIFY_SSL=false 关闭
-    verify_ssl = os.environ.get("DITING_VERIFY_SSL", "true").strip().lower() != "false"
+    # SSL 验证：默认关闭，仅当 DITING_VERIFY_SSL=true 时开启
+    verify_ssl = os.environ.get("DITING_VERIFY_SSL", "").strip().lower() == "true"
 
     # poll_task 可配置参数
     poll_max_wait = int(os.environ.get("DITING_POLL_MAX_WAIT", str(DEFAULT_POLL_MAX_WAIT)))
