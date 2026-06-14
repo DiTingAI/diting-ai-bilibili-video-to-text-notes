@@ -6,7 +6,7 @@
   </a>
   &nbsp;
   <a href="https://diting.cc">
-    <img src="https://img.shields.io/badge/🧠-diting.cc_免费体验-ff6b6b?style=flat-square" alt="diting.cc">
+    <img src="https://img.shields.io/badge/🚀-diting.cc_免费体验-ff6b6b?style=flat-square" alt="diting.cc">
   </a>
   &nbsp;
   <a href="https://github.com/DiTingAI/diting-ai-bilibili-video-to-text-notes/issues/new?template=%F0%9F%8E%AF_request_lecture_notes.md">
