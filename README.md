@@ -97,7 +97,40 @@
 
 ---
 
-## 📄 License
+## ⚙️ 本地运行 / 二次开发
+
+如果你想在自己的机器上运行转写脚本，需要先获取 API Key：
+
+1. 前往 [diting.cc](https://diting.cc) 注册账号
+2. 在控制台获取你的 API Key
+3. 设置环境变量后即可运行：
+
+```bash
+# 必填：谛听 AI API Key（从 diting.cc 控制台获取）
+export DITING_API_KEY="your-api-key-here"
+
+# 可选配置（均有默认值）
+export DITING_API_BASE="https://api.diting.cc"   # API 地址
+export DITING_VERIFY_SSL="true"                   # 是否验证 SSL 证书
+export DITING_POLL_MAX_WAIT="3600"                # 轮询超时（秒）
+export DITING_POLL_INTERVAL="5"                   # 轮询间隔（秒）
+
+# 安装依赖并运行
+pip install -r requirements.txt
+python scripts/transcribe_worker.py
+```
+
+| 环境变量 | 必填 | 默认值 | 说明 |
+| :--- | :--- | :--- | :--- |
+| `DITING_API_KEY` | ✅ 是 | — | 谛听 AI API Key，从 [diting.cc](https://diting.cc) 获取 |
+| `DITING_API_BASE` | 否 | `https://api.diting.cc` | API 服务地址 |
+| `DITING_VERIFY_SSL` | 否 | `true` | SSL 证书验证，内网环境可设为 `false` |
+| `DITING_POLL_MAX_WAIT` | 否 | `3600` | 视频处理最长等待时间（秒） |
+| `DITING_POLL_INTERVAL` | 否 | `5` | 轮询任务状态间隔（秒） |
+
+---
+
+## �� License
 本项目采用 [MIT License](./LICENSE) 开源协议。提取出的文稿版权归原视频创作者所有，本仓库笔记仅限个人学习与研究使用。
 
 ---
