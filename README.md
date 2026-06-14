@@ -127,9 +127,41 @@ python scripts/transcribe_worker.py
 | `DITING_POLL_MAX_WAIT` | 否 | `3600` | 视频处理最长等待时间（秒） |
 | `DITING_POLL_INTERVAL` | 否 | `5` | 轮询任务状态间隔（秒） |
 
+### Q&A
+
+<details>
+<summary><b>运行时 SSL 报错怎么办？</b></summary>
+
+GitHub Actions 环境或内网代理可能导致 SSL 证书验证失败，添加以下环境变量即可解决：
+
+```bash
+export DITING_VERIFY_SSL="false"
+```
+
+在 GitHub 仓库中：`Settings → Secrets and variables → Actions`，添加：
+
+| Name | Value |
+| :--- | :--- |
+| `DITING_VERIFY_SSL` | `false` |
+
+</details>
+
+<details>
+<summary><b>API Key 在哪里获取？</b></summary>
+
+前往 [diting.cc](https://diting.cc) 注册账号，在控制台中即可获取 API Key。
+
+在 GitHub 仓库中：`Settings → Secrets and variables → Actions`，添加：
+
+| Name | Value |
+| :--- | :--- |
+| `DITING_API_KEY` | `你的 API Key` |
+
+</details>
+
 ---
 
-## �� License
+## 📜 License
 本项目采用 [MIT License](./LICENSE) 开源协议。提取出的文稿版权归原视频创作者所有，本仓库笔记仅限个人学习与研究使用。
 
 ---
