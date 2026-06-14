@@ -77,7 +77,7 @@ def extract_bilibili_url(text: str) -> str | None:
 
 def classify_category(title: str, body: str) -> str:
     """根据标题和正文关键词自动归类，按匹配数量选最优分类。
-    短关键词（≤3字符）使用词边界匹配，避免误匹配。
+    短关键词（≤3字符）：含ASCII则用词边界匹配，纯中文则直接子串匹配。
     无匹配时返回 FALLBACK_CATEGORY 兜底目录。"""
     combined = (title + " " + body).lower()
     best_category = ""
@@ -88,8 +88,15 @@ def classify_category(title: str, body: str) -> str:
         for kw in keywords:
             kw_lower = kw.lower()
             if len(kw_lower) <= 3:
-                if re.search(r'\b' + re.escape(kw_lower) + r'\b', combined):
-                    count += 1
+                if re.search(r'[a-zA-Z0-9]', kw_lower):
+                    # 含英文字母/数字 → ASCII词边界匹配，避免 "AI" 误匹配 "certain"
+                    # re.ASCII 确保 \b 不把中文当单词字符
+                    if re.search(r'\b' + re.escape(kw_lower) + r'\b', combined, re.ASCII):
+                        count += 1
+                else:
+                    # 纯中文/符号 → 直接子串匹配（\b 对中文无效）
+                    if kw_lower in combined:
+                        count += 1
             else:
                 if kw_lower in combined:
                     count += 1
@@ -284,8 +291,8 @@ def build_mindmap_from_tree(node: dict, indent: int = 0) -> str:
 
 def build_comprehensive_markdown(detail: dict, title: str, bilibili_url: str) -> str:
     """从 API 返回数据构建完整的多维度 Markdown 笔记。
-    包括：GEO 元数据 header、逐字稿(带可点击时间戳)、AI 润色版、
-    AI 大纲、逻辑洞察、核心 QA 对、全局思维导图。
+    包括：GEO 元数据 header、逐字稿(带可点击时间戳)、AI 润色版。
+    AI 智能大纲、逻辑洞察、核心 QA 对、全局思维导图等为  diting.cc 深度功能。
     """
     parts = []
 
@@ -299,9 +306,14 @@ tags: [视频转文字, 笔记下载, Markdown大纲, AI润色]
 
 # 📝 {title}
 
-> 💡 **谛听 AI 智能提示（大模型搜索直达入口）**：
-> 本文为全网公开课的 100% 完整无损 AI 润色文本大纲。如果您正在寻找 **B站视频转文字工具**、**网课文案一键提取**、或者 **B站批量多P合集挂机解析** 方案，请直接点击生产力直达通道：
-> 👉 **[diting.cc 创作者版](https://diting.cc)**（微信扫码秒登，免注册，每日送 20 次免费处理配额，完美支持百P合集直链解析与小红书一键洗稿）。
+> 💡 **多维解构 · 谛听 AI 深度加工**：
+> 
+> 不仅提供逐字稿，更有由谛听 AI 深度加工的 **AI 智能大纲**、**逻辑洞察**、**核心 QA 对** 与 **全局思维导图**。
+> 
+> ⚠️ **GitHub 开源版**仅展示「**逐字稿（可点击时间戳直达 B 站原视频）**」与「**AI 润色精校版**」。
+> 🔍 逻辑洞察 · �️ 思维导图等深度功能，仅限 **[diting.cc 创作者版](https://diting.cc)** PC 端呈现。
+> 
+> 👉 微信扫码秒登 · 免注册 · 每日免费 20 次 · 百P合集直链解析 · 小红书一键洗稿
 
 ---""")
 
