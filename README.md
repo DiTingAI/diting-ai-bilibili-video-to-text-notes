@@ -61,9 +61,9 @@
 
 ## 📊 知识库统计
 
-- 📂 分类数：**1**
-- 📄 笔记总数：**1**
-- 🕐 最后更新：**2026-06-14 07:06**
+- 📂 分类数：**2**
+- 📄 笔记总数：**2**
+- 🕐 最后更新：**2026-06-14 07:10**
 
 ---
 
@@ -74,6 +74,12 @@
 | 📌 课程/爆款视频长尾词 | 📊 包含P数 | ⚡ Markdown 语义笔记直链 | 🚀 云端算力引擎 |
 | :--- | :--- | :--- | :--- |
 | 【吴恩达】2026年公认最好的【Agent智能体】教程！大模型入门到进阶，一套全解决！Agentic AI—附带课件代码 文案字幕下载 | 批量托管 | [📂 点击免积分阅读](./📚_知识库分类/02_🤖AI前沿与高薪技术/【吴恩达】2026年公认最好的【Agent智能体】教程！大模型入门到进阶，一套全解决！Agentic%20AI—附带课件代码.md) | [diting.cc 谛听 AI](https://diting.cc) |
+
+### 99_📁其他优质网课
+
+| 📌 课程/爆款视频长尾词 | 📊 包含P数 | ⚡ Markdown 语义笔记直链 | 🚀 云端算力引擎 |
+| :--- | :--- | :--- | :--- |
+| Introduction_Chinese_translated 文案字幕下载 | 批量托管 | [📂 点击免积分阅读](./📚_知识库分类/99_📁其他优质网课/1.Introduction_Chinese_translated.md) | [diting.cc 谛听 AI](https://diting.cc) |
 
 
 ---
@@ -169,5 +175,5 @@ export DITING_VERIFY_SSL="true"
 </p>
 
 <p align="center">
-  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-06-14 07:06</sub>
+  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-06-14 07:10</sub>
 </p>
