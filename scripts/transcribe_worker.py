@@ -23,6 +23,9 @@ DITING_API_BASE = os.environ.get("DITING_API_BASE", "https://api.diting.cc")
 DITING_API_KEY = os.environ.get("DITING_API_KEY", "").strip()
 ISSUE_BODY = os.environ.get("ISSUE_BODY", "")
 ISSUE_TITLE = os.environ.get("ISSUE_TITLE", "")
+# 多P批量开关：从 Issue 正文提取 BATCH_ALL=是/否，默认否（仅转写当前分P）
+_BATCH_M = re.search(r'BATCH_ALL\s*[=：:]\s*(是|否)', ISSUE_BODY)
+BATCH_ALL = (_BATCH_M.group(1) == "是") if _BATCH_M else False
 
 # 知识库分类映射：根据标题/标签关键词自动归类
 CATEGORY_KEYWORDS = {
@@ -99,6 +102,12 @@ def extract_bvid(url: str) -> str | None:
     """从 B 站链接中提取 BV 号。"""
     m = re.search(r'/video/(BV[\w]+)', url)
     return m.group(1) if m else None
+
+
+def extract_page_number(url: str) -> int:
+    """从 B 站 URL 中提取 p= 参数，返回页码（从1开始），默认返回 1。"""
+    m = re.search(r'[?&]p=(\d+)', url)
+    return int(m.group(1)) if m else 1
 
 
 # ── API 调用 ──────────────────────────────────────────
@@ -404,23 +413,47 @@ def main():
     is_multi_part = video_data.get("is_multi_part") is True
 
     if parts and (is_collection or is_multi_part):
-        # 多P/合集：批量提交所有分P，每个分P独立生成MD文件
-        print(f"📦 检测到合集/多P（共{len(parts)}P），批量提交所有分P...")
-        for part in parts:
-            part_url = clean_url(part.get("url", ""))
+        print(f"📦 检测到合集/多P（共{len(parts)}P），BATCH_ALL={'是' if BATCH_ALL else '否'}")
+        if BATCH_ALL:
+            # 批量提交所有分P，每个分P独立生成MD文件
+            print(f"📦 批量提交全部 {len(parts)}P...")
+            for part in parts:
+                part_url = clean_url(part.get("url", ""))
+                video_entry = {
+                    "url": part_url,
+                    "thumbnail": clean_url(part.get("thumbnail") or video_data.get("thumbnail", "")),
+                    "title": part.get("title") or video_data.get("title", ""),
+                    "duration": part.get("duration") or video_data.get("duration", "0:00"),
+                    "cid": part.get("cid"),
+                    "aid": part.get("aid"),
+                    "season_id": video_data.get("season_id", 0) if is_collection else 0,
+                    "total_pages": len(parts),
+                    "pubdate": part.get("pubdate", 0),
+                }
+                videos_payload.append(video_entry)
+            print(f"📦 共 {len(videos_payload)} 个分P待处理")
+        else:
+            # 仅提交当前分P（is_selected > URL p= > 默认第1P）
+            page_num = extract_page_number(bilibili_url)
+            selected_part = next((p for p in parts if p.get("is_selected")), None)
+            if selected_part:
+                page_num = selected_part.get("part_index") or page_num
+            page_idx = max(0, min(page_num - 1, len(parts) - 1))
+            selected = parts[page_idx]
+            print(f"📌 最终选第 {page_idx + 1}P: {selected.get('title', '')}")
+            part_url = clean_url(selected.get("url", ""))
             video_entry = {
                 "url": part_url,
-                "thumbnail": clean_url(part.get("thumbnail") or video_data.get("thumbnail", "")),
-                "title": part.get("title") or video_data.get("title", ""),
-                "duration": part.get("duration") or video_data.get("duration", "0:00"),
-                "cid": part.get("cid"),
-                "aid": part.get("aid"),
+                "thumbnail": clean_url(selected.get("thumbnail") or video_data.get("thumbnail", "")),
+                "title": selected.get("title") or video_data.get("title", ""),
+                "duration": selected.get("duration") or video_data.get("duration", "0:00"),
+                "cid": selected.get("cid"),
+                "aid": selected.get("aid"),
                 "season_id": video_data.get("season_id", 0) if is_collection else 0,
-                "total_pages": len(parts),
-                "pubdate": part.get("pubdate", 0),
+                "total_pages": 1,
+                "pubdate": selected.get("pubdate", 0),
             }
             videos_payload.append(video_entry)
-        print(f"📦 共 {len(videos_payload)} 个分P待处理")
     else:
         # 单视频
         videos_payload.append({
