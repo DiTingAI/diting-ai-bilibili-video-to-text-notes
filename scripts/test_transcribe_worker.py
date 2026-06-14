@@ -6,24 +6,12 @@
 运行方式：pytest scripts/test_transcribe_worker.py -v
 """
 
-import os
-import re
 import sys
-import json
 import pytest
 from pathlib import Path
 
 # 确保可以导入 transcribe_worker 中的函数
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-
-# 绕过模块级的 urllib3 导入和 API 调用
-import urllib3
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
-# 手动设置环境变量以避免模块级代码报错
-os.environ.setdefault("DITING_API_KEY", "test-key")
-os.environ.setdefault("ISSUE_BODY", "")
-os.environ.setdefault("ISSUE_TITLE", "")
 
 from transcribe_worker import (
     extract_bilibili_url,
@@ -39,7 +27,8 @@ from transcribe_worker import (
     build_mindmap_from_tree,
     build_comprehensive_markdown,
     extract_text,
-    CATEGORY_KEYWORDS,
+    _parse_batch_all,
+    _parse_manual_category,
     FALLBACK_CATEGORY,
 )
 
@@ -527,24 +516,22 @@ class TestExtractText:
 # ════════════════════════════════════════════════════════
 
 class TestBatchAllParsing:
-    def parse(self, body: str) -> bool:
-        m = re.search(r'BATCH_ALL\s*[=：:]\s*(是|否)', body)
-        return (m.group(1) == "是") if m else False
+    """测试 _parse_batch_all 函数"""
 
     def test_yes(self):
-        assert self.parse("BATCH_ALL=是") is True
+        assert _parse_batch_all("BATCH_ALL=是") is True
 
     def test_no(self):
-        assert self.parse("BATCH_ALL=否") is False
+        assert _parse_batch_all("BATCH_ALL=否") is False
 
     def test_not_present(self):
-        assert self.parse("没有 BATCH_ALL") is False
+        assert _parse_batch_all("没有 BATCH_ALL") is False
 
     def test_colon_separator(self):
-        assert self.parse("BATCH_ALL：是") is True
+        assert _parse_batch_all("BATCH_ALL：是") is True
 
     def test_colon_english(self):
-        assert self.parse("BATCH_ALL:是") is True
+        assert _parse_batch_all("BATCH_ALL:是") is True
 
     def test_multiline_body(self):
         body = """
@@ -552,7 +539,7 @@ class TestBatchAllParsing:
         BATCH_ALL=是
         备注：none
         """
-        assert self.parse(body) is True
+        assert _parse_batch_all(body) is True
 
 
 # ════════════════════════════════════════════════════════
@@ -560,33 +547,36 @@ class TestBatchAllParsing:
 # ════════════════════════════════════════════════════════
 
 class TestManualCategoryParsing:
-    def parse(self, body: str) -> str:
-        m = re.search(r'CATEGORY\s*[=：:]\s*(.+)', body)
-        return m.group(1).strip() if m else ""
+    """测试 _parse_manual_category 函数"""
 
     def test_set_category(self):
-        result = self.parse("CATEGORY=03_🎨设计创意与剪辑")
-        assert result == "03_🎨设计创意与剪辑"
+        assert _parse_manual_category("CATEGORY=03_🎨设计创意与剪辑") == "03_🎨设计创意与剪辑"
 
     def test_colon_separator(self):
-        result = self.parse("CATEGORY：05_📱自媒体与内容创作")
-        assert result == "05_📱自媒体与内容创作"
+        assert _parse_manual_category("CATEGORY：05_📱自媒体与内容创作") == "05_📱自媒体与内容创作"
 
     def test_custom_category(self):
-        result = self.parse("CATEGORY=06_📚人文社科")
-        assert result == "06_📚人文社科"
+        assert _parse_manual_category("CATEGORY=06_📚人文社科") == "06_📚人文社科"
 
     def test_not_present(self):
-        result = self.parse("没有 CATEGORY")
-        assert result == ""
+        assert _parse_manual_category("没有 CATEGORY") == ""
 
     def test_multiline_extraction(self):
         body = """
         BATCH_ALL=否
         CATEGORY=04_📈商业财经与搞钱
         """
-        result = self.parse(body)
-        assert result == "04_📈商业财经与搞钱"
+        assert _parse_manual_category(body) == "04_📈商业财经与搞钱"
+
+    def test_empty_value_no_newline_capture(self):
+        """CATEGORY= 后为空时不应跨行捕获代码围栏"""
+        assert _parse_manual_category("\n```\nCATEGORY=\n```\n") == ""
+
+    def test_trailing_spaces(self):
+        assert _parse_manual_category("CATEGORY=  01_🔥考研考编必刷  ") == "01_🔥考研考编必刷"
+
+    def test_tabs(self):
+        assert _parse_manual_category("CATEGORY\t=\t02_🤖AI前沿与高薪技术") == "02_🤖AI前沿与高薪技术"
 
 
 # ════════════════════════════════════════════════════════
@@ -614,15 +604,8 @@ class TestIntegrationScenarios:
         BATCH_ALL=是
         CATEGORY=02_🤖AI前沿与高薪技术
         """
-        # BATCH_ALL 解析
-        m_batch = re.search(r'BATCH_ALL\s*[=：:]\s*(是|否)', body)
-        assert m_batch is not None
-        assert m_batch.group(1) == "是"
-
-        # CATEGORY 解析
-        m_cat = re.search(r'CATEGORY\s*[=：:]\s*(.+)', body)
-        assert m_cat is not None
-        assert m_cat.group(1).strip() == "02_🤖AI前沿与高薪技术"
+        assert _parse_batch_all(body) is True
+        assert _parse_manual_category(body) == "02_🤖AI前沿与高薪技术"
 
     def test_default_no_batch_issue(self):
         """默认不批量 Issue"""
@@ -630,8 +613,7 @@ class TestIntegrationScenarios:
         https://www.bilibili.com/video/BV456?p=3
         为什么想要这份笔记
         """
-        m_batch = re.search(r'BATCH_ALL\s*[=：:]\s*(是|否)', body)
-        assert m_batch is None  # 未设置 → 默认 false
+        assert _parse_batch_all(body) is False
 
     def test_url_with_p_param_page_extraction(self):
         """URL 中 p= 参数提取"""

@@ -25,12 +25,17 @@ jobs:
 
     steps:
       - name: 📥 检出代码
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: 🐍 环境准备
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
+      - name: 🧪 运行回归测试
+        run: |
+          pip install -r requirements.txt
+          python -m pytest scripts/test_transcribe_worker.py -v
 
       - name: 🧠 扫描全库并动态生成 GEO 语义 REAMDE
         run: python scripts/build_seo_readme.py

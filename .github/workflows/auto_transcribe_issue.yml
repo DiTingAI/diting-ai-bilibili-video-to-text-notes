@@ -15,12 +15,17 @@ jobs:
 
     steps:
       - name: 📥 检出代码
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: 🐍 环境准备
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
+      - name: 🧪 运行回归测试
+        run: |
+          pip install -r requirements.txt
+          python -m pytest scripts/test_transcribe_worker.py -v
 
       - name: 🚀 运行谛听云端转写 worker
         env:
@@ -28,9 +33,7 @@ jobs:
           ISSUE_BODY: ${{ github.event.issue.body }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
-        run: |
-          pip install requests
-          python scripts/transcribe_worker.py
+        run: python scripts/transcribe_worker.py
 
       - name: 📝 提交新笔记并关闭 Issue
         env:

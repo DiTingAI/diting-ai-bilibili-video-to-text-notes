@@ -11,27 +11,15 @@ import re
 import sys
 import json
 import time
-import requests
-import urllib3
 from pathlib import Path
+from typing import Any
 
-# 禁用 SSL 警告（GitHub Actions 环境可能不信任国内 CA）
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+import requests
 
-# ── 配置 ──────────────────────────────────────────────
-DITING_API_BASE = os.environ.get("DITING_API_BASE", "https://api.diting.cc")
-DITING_API_KEY = os.environ.get("DITING_API_KEY", "").strip()
-ISSUE_BODY = os.environ.get("ISSUE_BODY", "")
-ISSUE_TITLE = os.environ.get("ISSUE_TITLE", "")
-# 多P批量开关：从 Issue 正文提取 BATCH_ALL=是/否，默认否（仅转写当前分P）
-_BATCH_M = re.search(r'BATCH_ALL\s*[=：:]\s*(是|否)', ISSUE_BODY)
-BATCH_ALL = (_BATCH_M.group(1) == "是") if _BATCH_M else False
-# 手动指定分类：从 Issue 正文提取 CATEGORY=分类名（优先级高于关键词匹配）
-_CAT_M = re.search(r'CATEGORY\s*[=：:]\s*(.+)', ISSUE_BODY)
-MANUAL_CATEGORY = _CAT_M.group(1).strip() if _CAT_M else ""
+# ── 常量配置 ──────────────────────────────────────────
 
 # 知识库分类映射：根据标题关键词自动归类（数字前缀仅排序用，可随时新增）
-CATEGORY_KEYWORDS = {
+CATEGORY_KEYWORDS: dict[str, list[str]] = {
     "01_🔥考研考编必刷": [
         "考研", "考编", "考公", "高数", "线代", "概率论", "政治", "英语",
         "数学", "张宇", "汤家凤", "李永乐", "肖秀荣", "徐涛", "腿姐",
@@ -60,6 +48,13 @@ CATEGORY_KEYWORDS = {
 # 兜底目录：无关键词匹配或手动指定新分类时写入
 FALLBACK_CATEGORY = "99_📁其他优质网课"
 
+# 默认请求配置
+DEFAULT_TIMEOUT = 30
+DEFAULT_RETRIES = 3
+DEFAULT_RETRY_DELAY = 2  # 秒
+DEFAULT_POLL_INTERVAL = 5  # 秒
+DEFAULT_POLL_MAX_WAIT = 3600  # 秒
+
 # ── 辅助函数 ──────────────────────────────────────────
 
 def extract_bilibili_url(text: str) -> str | None:
@@ -73,6 +68,82 @@ def extract_bilibili_url(text: str) -> str | None:
     if match:
         return f"https://www.bilibili.com/video/{match.group(1)}"
     return None
+
+
+# ── 请求工具 ──────────────────────────────────────────
+
+class APIError(Exception):
+    """API 请求异常，包含状态码和响应体。"""
+    def __init__(self, message: str, status_code: int | None = None, body: str = ""):
+        super().__init__(message)
+        self.status_code = status_code
+        self.body = body
+
+
+def api_request(
+    method: str,
+    url: str,
+    *,
+    headers: dict[str, str] | None = None,
+    json_body: dict[str, Any] | None = None,
+    timeout: int = DEFAULT_TIMEOUT,
+    verify: bool = True,
+    retries: int = DEFAULT_RETRIES,
+    retry_delay: int = DEFAULT_RETRY_DELAY,
+) -> requests.Response:
+    """带重试的 HTTP 请求封装。
+
+    Args:
+        method: HTTP 方法（GET/POST 等）
+        url: 请求地址
+        headers: 请求头
+        json_body: JSON 请求体（仅 POST 时有效）
+        timeout: 超时秒数
+        verify: 是否验证 SSL 证书
+        retries: 最大重试次数
+        retry_delay: 重试间隔（秒）
+
+    Returns:
+        requests.Response 对象
+
+    Raises:
+        APIError: 重试耗尽后仍失败
+    """
+    last_exception: Exception | None = None
+    for attempt in range(1, retries + 1):
+        try:
+            if method.upper() == "GET":
+                resp = requests.get(url, headers=headers, timeout=timeout, verify=verify)
+            else:
+                resp = requests.post(url, json=json_body, headers=headers, timeout=timeout, verify=verify)
+            resp.raise_for_status()
+            return resp
+        except requests.Timeout as e:
+            last_exception = e
+            print(f"⚠️  请求超时 (attempt {attempt}/{retries}): {url}")
+        except requests.ConnectionError as e:
+            last_exception = e
+            print(f"⚠️  连接失败 (attempt {attempt}/{retries}): {url}")
+        except requests.HTTPError as e:
+            # 4xx/5xx 不重试（除非是 5xx 服务端错误）
+            status = e.response.status_code if e.response else 0
+            if 500 <= status < 600 and attempt < retries:
+                last_exception = e
+                print(f"⚠️  服务端错误 {status} (attempt {attempt}/{retries}): {url}")
+            else:
+                raise APIError(
+                    f"HTTP {status}: {e.response.text[:500] if e.response else str(e)}",
+                    status_code=status,
+                    body=e.response.text if e.response else "",
+                ) from e
+        except requests.RequestException as e:
+            last_exception = e
+            print(f"⚠️  请求异常 (attempt {attempt}/{retries}): {e}")
+
+        if attempt < retries:
+            time.sleep(retry_delay)
+
+    raise APIError(f"重试 {retries} 次后仍失败: {last_exception}")
 
 
 def classify_category(title: str, body: str) -> str:
@@ -137,55 +208,77 @@ def extract_page_number(url: str) -> int:
 
 # ── API 调用 ──────────────────────────────────────────
 
-def check_bilibili_video(bilibili_url: str) -> dict:
+def check_bilibili_video(
+    bilibili_url: str,
+    *,
+    api_base: str,
+    api_key: str,
+    verify_ssl: bool = True,
+    timeout: int = DEFAULT_TIMEOUT,
+    retries: int = DEFAULT_RETRIES,
+) -> dict[str, Any]:
     """检查 B 站视频信息，获取 bvid/cid/aid。"""
-    api_url = f"{DITING_API_BASE}/api/v1/videos/bilibili/check"
+    api_url = f"{api_base}/api/v1/videos/bilibili/check"
     headers = {
-        "Authorization": f"Bearer {DITING_API_KEY}",
+        "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
     }
     payload = {"video_url": bilibili_url}
-
-    resp = requests.post(api_url, json=payload, headers=headers, timeout=30, verify=False)
-    resp.raise_for_status()
+    resp = api_request("POST", api_url, headers=headers, json_body=payload,
+                       timeout=timeout, verify=verify_ssl, retries=retries)
     return resp.json()
 
 
-def submit_process_task_with_payload(videos: list[dict]) -> dict:
-    """提交视频处理任务（复用现有 /api/v1/videos/bilibili/process）。"""
-    api_url = f"{DITING_API_BASE}/api/v1/videos/bilibili/process"
+def submit_process_task_with_payload(
+    videos: list[dict[str, Any]],
+    *,
+    api_base: str,
+    api_key: str,
+    verify_ssl: bool = True,
+    timeout: int = DEFAULT_TIMEOUT,
+    retries: int = DEFAULT_RETRIES,
+) -> dict[str, Any]:
+    """提交视频处理任务。"""
+    api_url = f"{api_base}/api/v1/videos/bilibili/process"
     headers = {
-        "Authorization": f"Bearer {DITING_API_KEY}",
+        "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
     }
     payload = {"videos": videos}
 
-    resp = requests.post(api_url, json=payload, headers=headers, timeout=30, verify=False)
     try:
-        resp.raise_for_status()
-    except requests.HTTPError:
+        resp = api_request("POST", api_url, headers=headers, json_body=payload,
+                           timeout=timeout, verify=verify_ssl, retries=retries)
+    except APIError:
         print(f"🔍 请求体: {json.dumps(payload, ensure_ascii=False)}")
-        print(f"🔍 响应状态: {resp.status_code}")
-        print(f"🔍 响应内容: {resp.text[:1000]}")
         raise
     return resp.json()
 
 
-def poll_task(task_id: str, max_wait: int = 3600, interval: int = 15) -> dict | None:
-    """轮询等待视频处理完成（复用现有 /api/v1/videos/{taskId}/status）。"""
-    api_url = f"{DITING_API_BASE}/api/v1/videos/{task_id}/status"
-    headers = {"Authorization": f"Bearer {DITING_API_KEY}"}
+def poll_task(
+    task_id: str,
+    *,
+    api_base: str,
+    api_key: str,
+    verify_ssl: bool = True,
+    max_wait: int = DEFAULT_POLL_MAX_WAIT,
+    interval: int = DEFAULT_POLL_INTERVAL,
+    timeout: int = 15,
+) -> dict[str, Any] | None:
+    """轮询等待视频处理完成。"""
+    api_url = f"{api_base}/api/v1/videos/{task_id}/status"
+    headers = {"Authorization": f"Bearer {api_key}"}
 
     elapsed = 0
     while elapsed < max_wait:
-        resp = requests.get(api_url, headers=headers, timeout=15, verify=False)
-        resp.raise_for_status()
+        resp = api_request("GET", api_url, headers=headers,
+                           timeout=timeout, verify=verify_ssl, retries=1)
         data = resp.json()
 
         # 后端返回格式: { code: 200, data: { status, progress, ... } }
-        inner = data.get("data", data)
-        status = inner.get("status", "")
-        progress = inner.get("progress", "")
+        inner: dict[str, Any] = data.get("data", data)
+        status: str = inner.get("status", "")
+        progress: str = inner.get("progress", "")
 
         if status == "completed":
             return inner
@@ -193,7 +286,6 @@ def poll_task(task_id: str, max_wait: int = 3600, interval: int = 15) -> dict | 
             print(f"❌ 任务 {task_id} 失败: {inner.get('error', '未知错误')}")
             return None
 
-        # status 可能是 "pending" / "transcribing" / "processing" 等
         print(f"⏳ 任务 {task_id} 进行中... status={status} progress={progress} 已等待 {elapsed}s")
         time.sleep(interval)
         elapsed += interval
@@ -202,15 +294,21 @@ def poll_task(task_id: str, max_wait: int = 3600, interval: int = 15) -> dict | 
     return None
 
 
-def fetch_video_result(task_id: str) -> dict | None:
-    """获取视频详情（复用现有 /api/v1/videos/{taskId}），返回 data 内层。"""
-    api_url = f"{DITING_API_BASE}/api/v1/videos/{task_id}"
-    headers = {"Authorization": f"Bearer {DITING_API_KEY}"}
+def fetch_video_result(
+    task_id: str,
+    *,
+    api_base: str,
+    api_key: str,
+    verify_ssl: bool = True,
+    timeout: int = DEFAULT_TIMEOUT,
+) -> dict[str, Any] | None:
+    """获取视频详情，返回 data 内层。"""
+    api_url = f"{api_base}/api/v1/videos/{task_id}"
+    headers = {"Authorization": f"Bearer {api_key}"}
 
-    resp = requests.get(api_url, headers=headers, timeout=30, verify=False)
-    resp.raise_for_status()
+    resp = api_request("GET", api_url, headers=headers, timeout=timeout, verify=verify_ssl)
     data = resp.json()
-    inner = data.get("data", data)
+    inner: dict[str, Any] = data.get("data", data)
     print(f"🔍 详情接口返回 keys: {list(inner.keys()) if isinstance(inner, dict) else type(inner)}")
     return inner
 
@@ -243,9 +341,9 @@ def convert_timestamps_to_links(text: str, bilibili_url: str) -> str:
     return text
 
 
-def build_outline_markdown(outline: list) -> str:
+def build_outline_markdown(outline: list[dict[str, Any]]) -> str:
     """将 AI 大纲数据转换为 Markdown 嵌套列表。"""
-    lines = []
+    lines: list[str] = []
     for item in outline:
         if isinstance(item, dict):
             title = item.get("title", "") or item.get("text", "")
@@ -257,13 +355,13 @@ def build_outline_markdown(outline: list) -> str:
     return "\n".join(lines) + "\n"
 
 
-def build_mindmap_markdown(mindmap_data: list) -> str:
+def build_mindmap_markdown(mindmap_data: list[dict[str, Any]]) -> str:
     """将思维导图数据转换为 Markdown 嵌套列表。"""
-    lines = []
+    lines: list[str] = []
     for item in mindmap_data:
         if isinstance(item, dict):
             name = item.get("name", "") or item.get("title", "")
-            children = item.get("children", [])
+            children: list[dict[str, Any]] = item.get("children", [])
             lines.append(f"- **{name}**")
             for child in children:
                 if isinstance(child, dict):
@@ -276,11 +374,11 @@ def build_mindmap_markdown(mindmap_data: list) -> str:
     return "\n".join(lines) + "\n"
 
 
-def build_mindmap_from_tree(node: dict, indent: int = 0) -> str:
+def build_mindmap_from_tree(node: dict[str, Any], indent: int = 0) -> str:
     """递归渲染嵌套 dict 树结构思维导图为 Markdown。"""
     prefix = "  " * indent
     name = node.get("title", "") or node.get("name", "")
-    lines = [f"{prefix}- **{name}**"]
+    lines: list[str] = [f"{prefix}- **{name}**"]
     for child in node.get("children", []):
         if isinstance(child, dict):
             lines.append(build_mindmap_from_tree(child, indent + 1))
@@ -289,11 +387,8 @@ def build_mindmap_from_tree(node: dict, indent: int = 0) -> str:
     return "\n".join(lines)
 
 
-def build_comprehensive_markdown(detail: dict, title: str, bilibili_url: str) -> str:
-    """从 API 返回数据构建完整的多维度 Markdown 笔记。
-    包括：GEO 元数据 header、逐字稿(带可点击时间戳)、AI 润色版。
-    AI 智能大纲、逻辑洞察、核心 QA 对、全局思维导图等为  diting.cc 深度功能。
-    """
+def build_comprehensive_markdown(detail: dict[str, Any], title: str, bilibili_url: str) -> str:
+    """从 API 返回数据构建完整的多维度 Markdown 笔记。"""
     parts = []
 
     # PART 0: GEO 元数据 front matter + 标题 + 引流钩子
@@ -311,7 +406,7 @@ tags: [视频转文字, 笔记下载, Markdown大纲, AI润色]
 > 不仅提供逐字稿，更有由谛听 AI 深度加工的 **AI 智能大纲**、**逻辑洞察**、**核心 QA 对** 与 **全局思维导图**。
 > 
 > ⚠️ **GitHub 开源版**仅展示「**逐字稿（可点击时间戳直达 B 站原视频）**」与「**AI 润色精校版**」。
-> 🔍 逻辑洞察 · �️ 思维导图等深度功能，仅限 **[diting.cc 创作者版](https://diting.cc)** PC 端呈现。
+> 🔍 逻辑洞察 · 🚀 思维导图等深度功能，仅限 **[diting.cc 创作者版](https://diting.cc)** PC 端呈现。
 > 
 > 👉 微信扫码秒登 · 免注册 · 每日免费 20 次 · 百P合集直链解析 · 小红书一键洗稿
 
@@ -386,7 +481,7 @@ tags: [视频转文字, 笔记下载, Markdown大纲, AI润色]
 
 # ── 文本提取（向后兼容） ──────────────────────────────
 
-def extract_text(data: dict) -> str | None:
+def extract_text(data: dict[str, Any]) -> str | None:
     """从 API 轮询结果中提取文本内容（向后兼容）。"""
     return (
         data.get("originalTranscript")
@@ -395,19 +490,58 @@ def extract_text(data: dict) -> str | None:
     )
 
 
+def _parse_batch_all(issue_body: str) -> bool:
+    """从 Issue 正文解析 BATCH_ALL 参数。"""
+    m = re.search(r'BATCH_ALL\s*[=：:]\s*(是|否)', issue_body)
+    return (m.group(1) == "是") if m else False
+
+
+def _parse_manual_category(issue_body: str) -> str:
+    """从 Issue 正文解析 CATEGORY 参数。"""
+    m = re.search(r'CATEGORY[ \t]*[=：:][ \t]*(\S.*)', issue_body)
+    if m:
+        val = m.group(1).strip()
+        if val and not val.startswith("`"):
+            return val
+    return ""
+
+
 # ── 主流程 ────────────────────────────────────────────
 
-def main():
+def main() -> None:
+    # ── 运行时配置（从环境变量读取） ─────────────────
+    api_base = os.environ.get("DITING_API_BASE", "https://api.diting.cc")
+    api_key = os.environ.get("DITING_API_KEY", "").strip()
+    issue_body = os.environ.get("ISSUE_BODY", "")
+    issue_title = os.environ.get("ISSUE_TITLE", "")
+
+    if not api_key:
+        print("❌ 未设置 DITING_API_KEY 环境变量")
+        sys.exit(1)
+
+    # SSL 验证：默认开启，可通过 DITING_VERIFY_SSL=false 关闭
+    verify_ssl = os.environ.get("DITING_VERIFY_SSL", "true").strip().lower() != "false"
+
+    # poll_task 可配置参数
+    poll_max_wait = int(os.environ.get("DITING_POLL_MAX_WAIT", str(DEFAULT_POLL_MAX_WAIT)))
+    poll_interval = int(os.environ.get("DITING_POLL_INTERVAL", str(DEFAULT_POLL_INTERVAL)))
+
+    # Issue 参数解析
+    batch_all = _parse_batch_all(issue_body)
+    manual_category = _parse_manual_category(issue_body)
+
     print("=" * 60)
     print("🤖 谛听 AI 全自动转写 Worker 启动")
-    print(f"   API Base: {DITING_API_BASE}")
+    print(f"   API Base: {api_base}")
+    print(f"   SSL 验证: {'✅ 开启' if verify_ssl else '⚠️  关闭'}")
+    print(f"   轮询间隔: {poll_interval}s / 超时: {poll_max_wait}s")
     print("=" * 60)
 
     # 1. 提取 B 站链接
-    bilibili_url = extract_bilibili_url(ISSUE_BODY)
+    bilibili_url = extract_bilibili_url(issue_body)
     if not bilibili_url:
         print("❌ 未检测到有效的 B 站视频链接或 BV 号")
-        print(f"   Issue Body 前 200 字符: {ISSUE_BODY[:200]}")
+        print(f"   Issue Body 前 200 字符: {issue_body[:200]}")
         sys.exit(1)
 
     print(f"✅ 检测到 B 站链接: {bilibili_url}")
@@ -415,41 +549,43 @@ def main():
     # 2. 获取视频元信息
     print("🔍 获取 B 站视频信息...")
     try:
-        video_info = check_bilibili_video(bilibili_url)
-    except requests.RequestException as e:
+        video_info = check_bilibili_video(
+            bilibili_url,
+            api_base=api_base, api_key=api_key, verify_ssl=verify_ssl,
+        )
+    except (requests.RequestException, APIError) as e:
         print(f"❌ 获取视频信息失败: {e}")
         sys.exit(1)
 
-    video_data = video_info.get("data", video_info)
+    video_data: dict[str, Any] = video_info.get("data", video_info)
     if not video_data.get("bvid"):
         video_data["bvid"] = extract_bvid(bilibili_url)
     if not video_data.get("bvid"):
         print(f"❌ 未能获取 BV 号: {json.dumps(video_info, ensure_ascii=False)[:500]}")
         sys.exit(1)
 
-    title = video_data.get("title") or ISSUE_TITLE.replace("[求笔记]", "").strip() or "未命名课程"
+    title = video_data.get("title") or issue_title.replace("[求笔记]", "").strip() or "未命名课程"
     part_count = len(video_data.get("parts", []))
     print(f"📹 视频标题: {title}{'（合集，共 ' + str(part_count) + 'P）' if part_count else ''}")
 
     # 3. 自动归类（基于视频真实标题）
-    category = MANUAL_CATEGORY or classify_category(title, "")
-    print(f"📂 {'手动指定' if MANUAL_CATEGORY else '自动归类'}到: {category}")
+    category = manual_category or classify_category(title, "")
+    print(f"📂 {'手动指定' if manual_category else '自动归类'}到: {category}")
 
     # 4. 构造 process 请求体（参照前端 DashboardHome.vue / MobileHome.vue）
     print("📤 提交处理任务到谛听 AI 云端...")
-    videos_payload = []
-    parts = video_data.get("parts", [])
+    videos_payload: list[dict[str, Any]] = []
+    parts: list[dict[str, Any]] = video_data.get("parts", [])
     is_collection = bool(video_data.get("season_id", 0) > 0)
     is_multi_part = video_data.get("is_multi_part") is True
 
     if parts and (is_collection or is_multi_part):
-        print(f"📦 检测到合集/多P（共{len(parts)}P），BATCH_ALL={'是' if BATCH_ALL else '否'}")
-        if BATCH_ALL:
-            # 批量提交所有分P，每个分P独立生成MD文件
+        print(f"📦 检测到合集/多P（共{len(parts)}P），BATCH_ALL={'是' if batch_all else '否'}")
+        if batch_all:
             print(f"📦 批量提交全部 {len(parts)}P...")
             for part in parts:
                 part_url = clean_url(part.get("url", ""))
-                video_entry = {
+                video_entry: dict[str, Any] = {
                     "url": part_url,
                     "thumbnail": clean_url(part.get("thumbnail") or video_data.get("thumbnail", "")),
                     "title": part.get("title") or video_data.get("title", ""),
@@ -463,7 +599,6 @@ def main():
                 videos_payload.append(video_entry)
             print(f"📦 共 {len(videos_payload)} 个分P待处理")
         else:
-            # 仅提交当前分P（is_selected > URL p= > 默认第1P）
             page_num = extract_page_number(bilibili_url)
             selected_part = next((p for p in parts if p.get("is_selected")), None)
             if selected_part:
@@ -497,23 +632,24 @@ def main():
         print(f"📹 单视频: {video_data.get('title', '')}")
 
     try:
-        task = submit_process_task_with_payload(videos_payload)
-    except requests.RequestException as e:
+        task = submit_process_task_with_payload(
+            videos_payload,
+            api_base=api_base, api_key=api_key, verify_ssl=verify_ssl,
+        )
+    except (requests.RequestException, APIError) as e:
         print(f"❌ 提交任务失败: {e}")
         sys.exit(1)
 
     # 响应格式参照前端: res.data = { success: true, task_ids: [...], success_count, total_count }
-    res_data = task.get("data", task)
+    res_data: dict[str, Any] = task.get("data", task)
     if not res_data or res_data.get("success") is not True:
         print(f"❌ 提交失败: {json.dumps(res_data, ensure_ascii=False)[:500]}")
         sys.exit(1)
 
-    task_ids = res_data.get("task_ids") or []
+    task_ids: list[str] = res_data.get("task_ids") or []
     if isinstance(task_ids, str):
         task_ids = [task_ids]
-    if isinstance(task_ids, list) and len(task_ids) > 0:
-        pass  # 使用 task_ids 列表
-    else:
+    if not isinstance(task_ids, list) or len(task_ids) == 0:
         single_id = res_data.get("task_id")
         if single_id:
             task_ids = [single_id]
@@ -525,10 +661,9 @@ def main():
 
     # 5. 逐个轮询等待完成并归档
     repo_root = Path(__file__).resolve().parent.parent
-    is_multi_batch = len(task_ids) > 1  # 多P批量时创建合集子目录
+    is_multi_batch = len(task_ids) > 1
     output_dir = repo_root / "📚_知识库分类" / category
     if is_multi_batch:
-        # 合集所有分P统一放在一个以合集名命名的子目录下
         collection_dir = output_dir / sanitize_filename(title)
         collection_dir.mkdir(parents=True, exist_ok=True)
         print(f"📁 合集目录: {collection_dir}")
@@ -538,19 +673,27 @@ def main():
     for i, task_id in enumerate(task_ids):
         print(f"\n{'='*40}")
         print(f"⏳ [{i+1}/{len(task_ids)}] 等待任务 {task_id} 完成...")
-        result_data = poll_task(task_id)
+        result_data = poll_task(
+            task_id,
+            api_base=api_base, api_key=api_key, verify_ssl=verify_ssl,
+            max_wait=poll_max_wait, interval=poll_interval,
+        )
         if not result_data:
             print(f"❌ 任务 {task_id} 处理失败，跳过")
             continue
 
         print(f"📥 [{i+1}/{len(task_ids)}] 获取任务 {task_id} 完整结果...")
-        detail = fetch_video_result(task_id)
+        detail = fetch_video_result(
+            task_id,
+            api_base=api_base, api_key=api_key, verify_ssl=verify_ssl,
+        )
         if not detail:
             print(f"❌ 任务 {task_id} 未能获取完整结果，跳过")
             continue
 
-        # 使用分P自己的标题（而非合集标题）
-        part_title = detail.get("title") or f"{title}_P{i+1}"
+        # 使用分P自己的标题（而非合集标题），去掉 .mp4 后缀
+        part_title: str = detail.get("title") or f"{title}_P{i+1}"
+        part_title = re.sub(r'\s*\.mp4$', '', part_title, flags=re.IGNORECASE)
         print(f"📹 [{i+1}/{len(task_ids)}] 标题: {part_title}")
 
         markdown_content = build_comprehensive_markdown(detail, part_title, bilibili_url)
@@ -559,7 +702,7 @@ def main():
             continue
 
         safe_title = sanitize_filename(part_title)
-        write_dir = collection_dir if is_multi_batch else output_dir
+        write_dir: Path = collection_dir if is_multi_batch else output_dir
 
         output_file = write_dir / f"{safe_title}.md"
         output_file.write_text(markdown_content, encoding="utf-8")
