@@ -30,6 +30,7 @@ jobs:
       - name: 🚀 运行谛听云端转写 worker
         env:
           DITING_API_KEY: ${{ secrets.DITING_API_KEY }}
+          DITING_VERIFY_SSL: ${{ secrets.DITING_VERIFY_SSL }}
           ISSUE_BODY: ${{ github.event.issue.body }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
