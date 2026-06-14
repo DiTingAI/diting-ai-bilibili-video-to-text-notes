@@ -513,6 +513,16 @@ def main():
 
     # 5. 逐个轮询等待完成并归档
     repo_root = Path(__file__).resolve().parent.parent
+    is_multi_batch = len(task_ids) > 1  # 多P批量时创建合集子目录
+    output_dir = repo_root / "📚_知识库分类" / category
+    if is_multi_batch:
+        # 合集所有分P统一放在一个以合集名命名的子目录下
+        collection_dir = output_dir / sanitize_filename(title)
+        collection_dir.mkdir(parents=True, exist_ok=True)
+        print(f"📁 合集目录: {collection_dir}")
+    else:
+        output_dir.mkdir(parents=True, exist_ok=True)
+
     for i, task_id in enumerate(task_ids):
         print(f"\n{'='*40}")
         print(f"⏳ [{i+1}/{len(task_ids)}] 等待任务 {task_id} 完成...")
@@ -537,10 +547,9 @@ def main():
             continue
 
         safe_title = sanitize_filename(part_title)
-        output_dir = repo_root / "📚_知识库分类" / category
-        output_dir.mkdir(parents=True, exist_ok=True)
+        write_dir = collection_dir if is_multi_batch else output_dir
 
-        output_file = output_dir / f"{safe_title}.md"
+        output_file = write_dir / f"{safe_title}.md"
         output_file.write_text(markdown_content, encoding="utf-8")
         print(f"✅ [{i+1}/{len(task_ids)}] 笔记已归档: {output_file}")
 
