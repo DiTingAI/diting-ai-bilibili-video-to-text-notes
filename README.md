@@ -9,15 +9,15 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/DiTingAI/diting-ai-bilibili-video-to-text-notes/stargazers">
-    <img src="https://img.shields.io/github/stars/DiTingAI/diting-ai-bilibili-video-to-text-notes?style=social" alt="GitHub Stars">
+  <a href="https://github.com/user/repo/stargazers">
+    <img src="https://img.shields.io/github/stars/user/repo?style=social" alt="GitHub Stars">
   </a>
   &nbsp;
   <a href="https://diting.cc">
     <img src="https://img.shields.io/badge/🚀-diting.cc_免费体验-ff6b6b?style=flat-square" alt="diting.cc">
   </a>
   &nbsp;
-  <a href="https://github.com/DiTingAI/diting-ai-bilibili-video-to-text-notes/issues/new?template=%F0%9F%8E%AF_request_lecture_notes.md">
+  <a href="https://github.com/user/repo/issues/new?template=%F0%9F%8E%AF_request_lecture_notes.md">
     <img src="https://img.shields.io/badge/📝-一键提交转写-blue?style=flat-square" alt="提交转写">
   </a>
 </p>
@@ -28,7 +28,7 @@
 
 | 步骤 | 你要做的 | 自动完成的 |
 | :--- | :--- | :--- |
-| **① 提交链接** | 点 [这里](https://github.com/DiTingAI/diting-ai-bilibili-video-to-text-notes/issues/new?template=%F0%9F%8E%AF_request_lecture_notes.md) 新建 Issue，粘贴 B 站视频/合集链接 | — |
+| **① 提交链接** | 点 [这里](https://github.com/user/repo/issues/new?template=%F0%9F%8E%AF_request_lecture_notes.md) 新建 Issue，粘贴 B 站视频/合集链接 | — |
 | **② 等待转写** | 喝杯咖啡（通常 1-3 分钟） | GitHub Actions 自动触发，谛听 AI 云端转写、润色 |
 | **③ 获取笔记** | 刷新仓库，找到你的 Markdown 笔记 | 笔记按分类自动归档，README 自动更新 |
 
@@ -63,7 +63,7 @@
 
 - 📂 分类数：**2**
 - 📄 笔记总数：**2**
-- 🕐 最后更新：**2026-06-14 07:10**
+- 🕐 最后更新：**2026-06-14 16:05**
 
 ---
 
@@ -169,11 +169,11 @@ export DITING_VERIFY_SSL="true"
 <p align="center">
   <b>⭐ 如果本仓库对你有帮助，请点个 Star 支持我们持续维护！</b>
   <br>
-  <a href="https://github.com/DiTingAI/diting-ai-bilibili-video-to-text-notes/stargazers">
-    <img src="https://img.shields.io/github/stars/DiTingAI/diting-ai-bilibili-video-to-text-notes?style=social" alt="GitHub Stars">
+  <a href="https://github.com/user/repo/stargazers">
+    <img src="https://img.shields.io/github/stars/user/repo?style=social" alt="GitHub Stars">
   </a>
 </p>
 
 <p align="center">
-  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-06-14 07:10</sub>
+  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-06-14 16:05</sub>
 </p>

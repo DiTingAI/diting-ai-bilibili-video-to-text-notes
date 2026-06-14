@@ -7,6 +7,18 @@ assignees: []
 about: 提交 B 站链接，全自动转写归档为 Markdown 笔记
 ---
 
+> ### ⚠️ 请先确认：你在自己的 Fork 仓库中
+>
+> 本仓库**不提供 API Key**。请按以下步骤操作：
+> 1. **Fork 本仓库**到你自己的 GitHub 账号下
+> 2. 前往 [diting.cc](https://diting.cc) 免费注册，获取你的 API Key
+> 3. 在你 Fork 的仓库中 `Settings → Secrets and variables → Actions`，添加 `DITING_API_KEY`
+> 4. **在你 Fork 的仓库中**提交此 Issue
+>
+> 没有 API Key 的 Issue 无法触发转写，会被自动忽略。
+
+---
+
 ## 📺 请粘贴 B 站视频或合集链接
 
 <!-- 请在下方的文本框中粘贴你想转写的 B 站视频/合集链接（支持单P或多P合集链接） -->
@@ -39,11 +51,12 @@ BATCH_ALL=否
 CATEGORY=
 ```
 
-
+---
 
 ## ⚠️ 提交须知
 
+- ⚠️ **每个 GitHub 账号每天限通过 Issue 免费转写 2 次**。想要解锁每日 20 次免登录高频转写、或进行百 P 合集批量托管挂机，请直接前往 [diting.cc](https://diting.cc)，微信扫码即用，额度每日自动刷新
 - 请确保提交的链接为公开的 B 站视频或合集
-- 本仓库由 [谛听 AI (diting.cc)](https://diting.cc) 云端引擎全自动转写，通常在提交后 **1-2 小时内**完成归档
-- 转写完成后本 Issue 将自动关闭，笔记文件会直接提交到本仓库对应分类目录下
+- 需提前在 Fork 仓库中配置好 `DITING_API_KEY`（从 [diting.cc](https://diting.cc) 免费获取）
+- 转写完成后本 Issue 将自动关闭，笔记文件会直接提交到你的 Fork 仓库对应分类目录下
 - 笔记仅供个人学习研究使用，原视频版权归原作者所有

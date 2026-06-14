@@ -27,6 +27,22 @@ jobs:
           pip install -r requirements.txt
           python -m pytest scripts/test_transcribe_worker.py -v
 
+      - name: 🛡️ 每日限额检查（每账号每天限 2 次）
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          AUTHOR: ${{ github.event.sender.login }}
+        run: |
+          COUNT=$(gh search issues "label:求笔记 author:$AUTHOR created:>=$(date -d '24 hours ago' +%Y-%m-%d)" --limit 100 --json number | jq '. | length')
+          echo "📊 用户 $AUTHOR 近24h Issue 数: $COUNT"
+          if [ "$COUNT" -gt 2 ]; then
+            echo "⛔ 超出每日限额 (2次/天)"
+            gh issue comment $ISSUE_NUMBER --body "⛔ **每日限额提醒**：为防止恶意刷单，每个 GitHub 账号每天限通过 Issue 免费转写 **2 次**。你今日已用完限额。想要解锁每日 20 次免登录高频转写、或进行百 P 合集批量托管挂机，请直接前往 [diting.cc](https://diting.cc)，微信扫码即用，额度每日自动刷新！"
+            gh issue close $ISSUE_NUMBER --reason "not planned"
+            exit 1
+          fi
+          echo "✅ 限额检查通过"
+
       - name: 🚀 运行谛听云端转写 worker
         env:
           DITING_API_KEY: ${{ secrets.DITING_API_KEY }}
