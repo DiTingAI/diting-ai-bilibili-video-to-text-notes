@@ -26,8 +26,11 @@ ISSUE_TITLE = os.environ.get("ISSUE_TITLE", "")
 # 多P批量开关：从 Issue 正文提取 BATCH_ALL=是/否，默认否（仅转写当前分P）
 _BATCH_M = re.search(r'BATCH_ALL\s*[=：:]\s*(是|否)', ISSUE_BODY)
 BATCH_ALL = (_BATCH_M.group(1) == "是") if _BATCH_M else False
+# 手动指定分类：从 Issue 正文提取 CATEGORY=分类名（优先级高于关键词匹配）
+_CAT_M = re.search(r'CATEGORY\s*[=：:]\s*(.+)', ISSUE_BODY)
+MANUAL_CATEGORY = _CAT_M.group(1).strip() if _CAT_M else ""
 
-# 知识库分类映射：根据标题/标签关键词自动归类
+# 知识库分类映射：根据标题关键词自动归类（数字前缀仅排序用，可随时新增）
 CATEGORY_KEYWORDS = {
     "01_🔥考研考编必刷": [
         "考研", "考编", "考公", "高数", "线代", "概率论", "政治", "英语",
@@ -39,8 +42,23 @@ CATEGORY_KEYWORDS = {
         "Python", "编程", "前端", "后端", "全栈", "算法",
         "AGI", "AIGC", "RAG", "神经网络", "transformer",
     ],
+    "03_🎨设计创意与剪辑": [
+        "设计", "PS", "Photoshop", "PR", "Premiere", "AE", "After Effects",
+        "剪辑", "调色", "C4D", "Blender", "Figma", "Sketch", "UI", "UX",
+        "平面设计", "视觉", "动画", "建模", "渲染", "达芬奇",
+    ],
+    "04_📈商业财经与搞钱": [
+        "商业", "财经", "理财", "投资", "股票", "基金", "创业",
+        "搞钱", "副业", "电商", "运营", "营销", "品牌", "管理",
+        "经济学", "金融", "商业模式",
+    ],
+    "05_📱自媒体与内容创作": [
+        "自媒体", "短视频", "抖音", "小红书", "公众号", "B站运营",
+        "拍摄", "文案", "脚本", "涨粉", "爆款", "选题", "写作",
+    ],
 }
-DEFAULT_CATEGORY = "02_🤖AI前沿与高薪技术"
+# 兜底目录：无关键词匹配或手动指定新分类时写入
+FALLBACK_CATEGORY = "99_📁其他优质网课"
 
 # ── 辅助函数 ──────────────────────────────────────────
 
@@ -59,9 +77,10 @@ def extract_bilibili_url(text: str) -> str | None:
 
 def classify_category(title: str, body: str) -> str:
     """根据标题和正文关键词自动归类，按匹配数量选最优分类。
-    短关键词（≤3字符）使用词边界匹配，避免误匹配。"""
+    短关键词（≤3字符）使用词边界匹配，避免误匹配。
+    无匹配时返回 FALLBACK_CATEGORY 兜底目录。"""
     combined = (title + " " + body).lower()
-    best_category = DEFAULT_CATEGORY
+    best_category = ""
     best_count = 0
 
     for category, keywords in CATEGORY_KEYWORDS.items():
@@ -69,7 +88,6 @@ def classify_category(title: str, body: str) -> str:
         for kw in keywords:
             kw_lower = kw.lower()
             if len(kw_lower) <= 3:
-                # 短关键词用词边界匹配，避免 "AI" 误匹配 "certain" 等
                 if re.search(r'\b' + re.escape(kw_lower) + r'\b', combined):
                     count += 1
             else:
@@ -79,7 +97,7 @@ def classify_category(title: str, body: str) -> str:
             best_count = count
             best_category = category
 
-    return best_category
+    return best_category or FALLBACK_CATEGORY
 
 
 def sanitize_filename(name: str, max_len: int = 80) -> str:
@@ -402,8 +420,8 @@ def main():
     print(f"📹 视频标题: {title}{'（合集，共 ' + str(part_count) + 'P）' if part_count else ''}")
 
     # 3. 自动归类（基于视频真实标题）
-    category = classify_category(title, "")
-    print(f"📂 自动归类到: {category}")
+    category = MANUAL_CATEGORY or classify_category(title, "")
+    print(f"📂 {'手动指定' if MANUAL_CATEGORY else '自动归类'}到: {category}")
 
     # 4. 构造 process 请求体（参照前端 DashboardHome.vue / MobileHome.vue）
     print("📤 提交处理任务到谛听 AI 云端...")
