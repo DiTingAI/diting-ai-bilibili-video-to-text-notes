@@ -56,6 +56,12 @@
 
 🔍 **注：[全局思维导图]、[发言人隔离]、[多矩阵自媒体洗稿] 等变态级重度生产力功能，仅限 [https://diting.cc](https://diting.cc) 创作者版 PC 端呈现。**
 
+<p align="center">
+  <img src="./assets/note_preview.png" alt="笔记样例截图" width="720"/>
+  <br>
+  <sub>▲ 生成的 Markdown 笔记样例（点击时间戳直达 B 站原片秒数）</sub>
+</p>
+
 ---
 
 ## 🆓 额度与产品线方案对比（按需选择）
@@ -72,7 +78,7 @@
 
 - 📂 分类数：**2**
 - 📄 笔记总数：**53**
-- 🕐 最后更新：**2026-06-15 02:17**
+- 🕐 最后更新：**2026-06-15 03:11**
 
 ---
 
@@ -237,5 +243,5 @@ export DITING_VERIFY_SSL="true"
 </p>
 
 <p align="center">
-  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-06-15 02:17</sub>
+  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-06-15 03:11</sub>
 </p>
