@@ -78,7 +78,7 @@
 
 - 📂 分类数：**2**
 - 📄 笔记总数：**53**
-- 🕐 最后更新：**2026-06-15 03:11**
+- 🕐 最后更新：**2026-06-15 03:21**
 
 ---
 
@@ -236,12 +236,18 @@ export DITING_VERIFY_SSL="true"
 
 <p align="center">
   <b>⭐ 如果本仓库对你有帮助，请点个 Star 支持我们持续维护！</b>
-  <br>
+</p>
+
+<p align="center">
+  <img src="./assets/star_action.png" alt="点 Star 支持" width="400"/>
+</p>
+
+<p align="center">
   <a href="https://github.com/DiTingAI/diting-ai-bilibili-video-to-text-notes/stargazers">
     <img src="https://img.shields.io/github/stars/DiTingAI/diting-ai-bilibili-video-to-text-notes?style=social" alt="GitHub Stars">
   </a>
 </p>
 
 <p align="center">
-  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-06-15 03:11</sub>
+  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-06-15 03:21</sub>
 </p>
