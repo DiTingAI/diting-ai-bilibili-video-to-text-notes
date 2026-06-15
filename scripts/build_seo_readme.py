@@ -200,7 +200,9 @@ export DITING_VERIFY_SSL="true"
 </p>
 
 <p align="center">
-  <img src="./assets/star_action.png" alt="点 Star 支持" width="400"/>
+  <a href="https://github.com/{{REPO_FULL_NAME}}/stargazers">
+    <img src="./assets/star_action.png" alt="点 Star 支持" width="400"/>
+  </a>
 </p>
 
 <p align="center">
