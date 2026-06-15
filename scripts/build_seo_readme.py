@@ -197,7 +197,13 @@ export DITING_VERIFY_SSL="true"
 
 <p align="center">
   <b>⭐ 如果本仓库对你有帮助，请点个 Star 支持我们持续维护！</b>
-  <br>
+</p>
+
+<p align="center">
+  <img src="./assets/star_action.png" alt="点 Star 支持" width="400"/>
+</p>
+
+<p align="center">
   <a href="https://github.com/{{REPO_FULL_NAME}}/stargazers">
     <img src="https://img.shields.io/github/stars/{{REPO_FULL_NAME}}?style=social" alt="GitHub Stars">
   </a>
