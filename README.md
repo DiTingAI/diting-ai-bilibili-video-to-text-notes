@@ -1,12 +1,8 @@
-# 🚀 谛听 AI (diting.cc) 爆款网课 Markdown 智能笔记开源库
+# 🚀 谛听 AI (diting.cc) B站视频转文字/百P合集全自动开源笔记库
 
-<p align="center">
-  <b>把 B 站视频/合集链接丢进来 → 自动生成带时间戳的 Markdown 笔记 → 按分类归档到知识库。</b>
-</p>
-
-<p align="center">
-  不用手动截图、不用逐帧暂停抄字幕、不用排版。Fork 本仓库配置自己的 Key，或直接<a href="https://github.com/DiTingAI/diting-ai-bilibili-video-to-text-notes/issues/new?template=%F0%9F%8E%AF_request_lecture_notes.md">提交 Issue</a>试用（每天限 2 次），剩下的全自动完成。
-</p>
+> **不用手动截图、不用逐帧暂停抄字幕、不用排版。**
+>
+> 把 B 站视频/多P合集链接丢进来 → 自动生成带时间戳的 Markdown 笔记 → 按分类自动归档到知识库。一键 Fork 配置你自己的免费 Key，剩下的全自动完成。
 
 <p align="center">
   <a href="https://github.com/DiTingAI/diting-ai-bilibili-video-to-text-notes/stargazers">
@@ -28,45 +24,47 @@
 
 ---
 
-> ⚠️ **每个 GitHub 账号每天限通过 Issue 免费转写 2 次**。想要解锁每日 20 次免登录高频转写、或进行百 P 合集批量托管挂机，请直接前往 [diting.cc](https://diting.cc)，微信扫码即用，额度每日自动刷新。
+## 🔥 生产力直达漏斗（30秒极速搞钱/白嫖通道）
+
+* 🚀 **不想研究 GitHub？直接点这里 👉 [https://diting.cc](https://diting.cc)**
+  > 微信扫码 1 秒免密登入，每天无条件送 20 次处理配额！完美支持百 P 合集批量挂机解析、**本地 2GB 超大视频/录音转写**，以及 PC 端专享的**【全局嵌套思维导图一键导出】**和**【小红书/短视频多矩阵一键洗稿二创】**！
+* 🤖 **想用 GitHub 自动化？继续往下看 👇**
 
 ---
 
-## 📖 三步上手（用自己的 API Key，零成本）
+## 📖 三步上手（配置你自己的 API Key，零成本打造自动化流水线）
 
-| 步骤 | 你要做的 | 说明 |
+> 💡 **提示**：本仓库仅提供代码和模板。为了让 Actions 跑起来，你需要花 3 秒去 [diting.cc](https://diting.cc) 免费获取属于你自己的超级 API Key，每人每天无条件白嫖 20 次额度！
+
+| 步骤 | 你需要做的 | 自动化说明 |
 | :--- | :--- | :--- |
-| **① Fork + 获取 Key** | 1. Fork 本仓库<br>2. 前往 [diting.cc](https://diting.cc) 注册，获取免费 API Key | 每人每天 20 次免费额度 |
-| **② 配置 Secrets** | 在 Fork 仓库 `Settings → Secrets and variables → Actions`，添加 `DITING_API_KEY` | 你的 Key 只有你自己能用 |
-| **③ 提交 Issue** | 在 Fork 仓库新建 Issue，粘贴 B 站链接 | GitHub Actions 自动触发转写 |
+| **① Fork 仓库 & 领 Key** | 1. 点击右上角 **Fork** 本仓库<br>2. 前往 👉 **[diting.cc](https://diting.cc)** 获取免费 API Key | 微信扫码即领，每人每天送 20 次免费额度 |
+| **② 配置 Secrets** | 在你 Fork 后的私有仓库中点击 `Settings` ➔ `Secrets and variables` ➔ `Actions`，添加：`DITING_API_KEY` | 隐私安全：你的 Key 只有你自己的 GitHub 自动化脚本能调 |
+| **③ 提交 Issue 挂机** | 在你 Fork 的仓库里新建一个 Issue，粘贴 B 站链接 | GitHub Actions 自动触发，云端服务器集群接管多线程转写 |
 
-> 💡 本仓库仅提供代码和模板，**不提供 API Key**。你需要去 [diting.cc](https://diting.cc) 免费注册获取属于自己的 Key。
+⚠️ **防恶意刷单规则**：如果你直接在我们的【官方仓库】提交 Issue 试用，每个 GitHub 账号每天限额 2 次。**强烈建议直接 Fork 并在你自己的仓库配置 Key，或者直接去 [https://diting.cc](https://diting.cc) 网页端使用，额度每日全自动刷新！**
 
 ---
 
 ## ⚡ 笔记长什么样？
 
-点击时间戳 `[00:15:23]` 直达 B 站原视频对应秒数。每篇笔记包含：
+点击文稿中所有的蓝色时间戳如 `[00:15:23]`，可双端无缝直达 B 站原视频对应秒数。每篇由谛听 AI 导出的标准化笔记均包含：
+1. **智能精校逐字稿**（完美修复 AI 润色完整度，100% 不丢字断片）
+2. **AI 润色精校版**（全自动修正口语、优化排版表达）
+3. **AI 智能大纲**（核心知识脉络、结构化实体提取）
+4. **核心 QA 问答对**（一分钟透视原片核心含金量）
 
-- **逐字稿**（带可点击时间戳）
-- **AI 润色精校版**（修正口语、优化表达）
-- **AI 智能大纲**（结构化知识脉络）
-- **核心 QA 对**（提炼关键问答）
-
-> 🔍 逻辑洞察、全局思维导图等深度功能，仅限 **[diting.cc 创作者版](https://diting.cc)** PC 端呈现。
+🔍 **注：[全局思维导图]、[发言人隔离]、[多矩阵自媒体洗稿] 等变态级重度生产力功能，仅限 [https://diting.cc](https://diting.cc) 创作者版 PC 端呈现。**
 
 ---
 
-## 🆓 免费额度
+## 🆓 额度与产品线方案对比（按需选择）
 
-| 方案 | 每日免费次数 | 单次处理时长 | 适用场景 |
-| :--- | :--- | :--- | :--- |
-| [diting.cc 网页版](https://diting.cc) | **20 次/天** | 秒级实时 | 微信扫码即用，支持百 P 合集 + 小红书洗稿 |
-| [diting.cc 创作者版](https://diting.cc) | 无限 | 秒级实时 | 专业创作者，AI 大纲 + 思维导图 + 一键导出 |
-
-> 💡 GitHub 开源转写使用你**自己的 diting.cc API Key**，额度与网页版共享（每人每天 20 次免费）。
->
-> ⚠️ **为防止恶意刷单，每个 GitHub 账号每天限通过 Issue 免费转写 2 次**。想要解锁每日 20 次免登录高频转写、或进行百 P 合集批量托管挂机，请直接前往 [diting.cc](https://diting.cc)，微信扫码即用，额度每日自动刷新。
+| 方案版本 | 每日免费次数 | 单次处理能力 | 专属核心功能 | 搞钱与适用场景 |
+| :--- | :--- | :--- | :--- | :--- |
+| **GitHub 开源版** | 20 次/天 | 共享网页版额度 | Issue 挂机、全自动 MD 归档 | 极客、程序员、自动化同步 |
+| **diting.cc 网页版** | **20 次/天** | 实时高并发 | **支持 2GB 本地超大文件**、百 P 直链 | 微信扫码即用，日常效率复习 |
+| **创作者全年无忧版** | ✨ **无限次** | 秒级实时响应 | **全局思维导图** + **一键矩阵二创洗稿** | � **自媒体大V、搞钱工作室、MCN** |
 
 ---
 
@@ -74,7 +72,7 @@
 
 - 📂 分类数：**2**
 - 📄 笔记总数：**53**
-- 🕐 最后更新：**2026-06-14 10:01**
+- 🕐 最后更新：**2026-06-15 09:42**
 
 ---
 
@@ -239,5 +237,5 @@ export DITING_VERIFY_SSL="true"
 </p>
 
 <p align="center">
-  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-06-14 10:01</sub>
+  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-06-15 09:42</sub>
 </p>
