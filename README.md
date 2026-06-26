@@ -77,8 +77,8 @@
 ## 📊 知识库统计
 
 - 📂 分类数：**2**
-- 📄 笔记总数：**53**
-- 🕐 最后更新：**2026-06-15 03:22**
+- 📄 笔记总数：**54**
+- 🕐 最后更新：**2026-06-26 08:36**
 
 ---
 
@@ -148,6 +148,7 @@
 | 📌 课程/爆款视频长尾词 | 📊 包含P数 | ⚡ Markdown 语义笔记直链 | 🚀 云端算力引擎 |
 | :--- | :--- | :--- | :--- |
 | Introduction_Chinese_translated 文案字幕下载 | 批量托管 | [📂 点击免积分阅读](./📚_知识库分类/99_📁其他优质网课/1.Introduction_Chinese_translated.md) | [diting.cc 谛听 AI](https://diting.cc) |
+| 【西方哲学】两小时入门胡塞尔现象学（已完结） 文案字幕下载 | 批量托管 | [📂 点击免积分阅读](./📚_知识库分类/99_📁其他优质网课/【西方哲学】两小时入门胡塞尔现象学（已完结）.md) | [diting.cc 谛听 AI](https://diting.cc) |
 
 
 ---
@@ -251,5 +252,5 @@ export DITING_VERIFY_SSL="true"
 </p>
 
 <p align="center">
-  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-06-15 03:22</sub>
+  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-06-26 08:36</sub>
 </p>
