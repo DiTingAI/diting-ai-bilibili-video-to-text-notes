@@ -51,15 +51,105 @@ README_HEADER = """# 🚀 谛听 AI (diting.cc) B站视频转文字/百P合集�
 
 ---
 
-## 📖 三步上手（配置你自己的 API Key，零成本打造自动化流水线）
+## 📖 五步上手（闭眼操作，零代码零基础）
 
-> 💡 **提示**：本仓库仅提供代码和模板。为了让 Actions 跑起来，你需要花 3 秒去 [diting.cc](https://diting.cc) 免费获取属于你自己的超级 API Key，每人每天无条件白嫖 20 次额度！
+> 💡 **前置准备**：你只需要一个 GitHub 账号（没有就去 [github.com](https://github.com) 免费注册）和 3 分钟时间。先去 [diting.cc](https://diting.cc) 花 3 秒微信扫码获取免费 API Key，每人每天无条件白嫖 **20 次**额度！
 
-| 步骤 | 你需要做的 | 自动化说明 |
-| :--- | :--- | :--- |
-| **① Fork 仓库 & 领 Key** | 1. 点击右上角 **Fork** 本仓库<br>2. 前往 👉 **[diting.cc](https://diting.cc)** 获取免费 API Key | 微信扫码即领，每人每天送 20 次免费额度 |
-| **② 配置 Secrets** | 在你 Fork 后的私有仓库中点击 `Settings` ➔ `Secrets and variables` ➔ `Actions`，添加：`DITING_API_KEY` | 隐私安全：你的 Key 只有你自己的 GitHub 自动化脚本能调 |
-| **③ 提交 Issue 挂机** | 在你 Fork 的仓库里新建一个 Issue，粘贴 B 站链接 | GitHub Actions 自动触发，云端服务器集群接管多线程转写 |
+### 第 1 步：Fork（复制）本仓库
+
+点击本仓库右上角的 **🍴 Fork** 按钮，把仓库复制到你自己账号下。
+
+> ✅ 做完后，你的 GitHub 首页会多出一个同名仓库，如 `你的用户名/diting-ai-bilibili-video-to-text-notes`
+
+---
+
+### 第 2 步：免费领取 API Key
+
+1. 浏览器打开 👉 **[diting.cc](https://diting.cc)**
+2. 微信扫码 1 秒免密登录
+3. 进入【控制台 / API 管理】，点击 **复制** 你的 API Key（一串字母+数字）
+
+> ✅ 做完后，你手上有一段类似 `diting_xxxxxxxxxxxx` 的 Key 字符串。**先别关页面**，下一步马上用到。
+
+---
+
+### 第 3 步：把 Key 配置到你 Fork 的仓库
+
+在你刚刚 Fork 的仓库页面中：
+
+1. 点顶部导航栏 **Settings**（中文界面叫「**设置**」）
+2. 左侧菜单找到 **Secrets and variables** → 点 **Actions**
+3. 点绿色 **New repository secret**（新建仓库机密）按钮
+4. **Name** 填：`DITING_API_KEY`
+5. **Value** 粘贴：你上一步复制的 API Key
+6. 点绿色 **Add secret**（添加机密）保存
+
+> ✅ 做完后，Secrets 列表里多了一条 `DITING_API_KEY`，说明 Key 已安全存入。你的 Key 只有你自己的脚本能读取，其他人看不到。
+
+---
+
+### 第 4 步：提一个 Issue，丢入 B 站链接
+
+在你 Fork 的仓库中：
+
+1. 点顶部 **Issues** 标签 → 点绿色 **New Issue**（新建 Issue）
+2. 标题随便写，比如「求笔记」
+3. 正文粘贴 **B 站视频链接**（支持完整 URL、BV 号、多 P 合集链接均可）
+4. 点绿色 **Submit new issue**（提交新 Issue）
+
+> ⚡ 提交后 GitHub Actions 自动触发，云端服务器接手转写，你现在可以去刷个短视频等着了。
+
+---
+
+### 第 5 步：等 2~5 分钟，笔记自动到位
+
+1. 点仓库顶部的 **Actions** 标签，能看到一个正在运行的黄色圆点任务
+2. 等它跑完变成绿色 ✅（通常 2~5 分钟，长视频可能 10 分钟）
+3. 回到仓库主页，打开 `📚_知识库分类/` 目录，笔记已按分类自动归档
+
+> ✅ 做完后，`📚_知识库分类/` 下多了一个 `.md` 文件。打开后点击任意蓝色时间戳如 `[00:15:23]`，可直接跳转到 B 站原视频的对应秒数！
+
+<p align="center">
+  <img src="./assets/batch_multi_p_result_demo.gif" alt="多P合集批量转写结果演示" width="720"/>
+  <br>
+  <sub>▲ 多 P 合集批量转写，笔记按分类自动归档演示</sub>
+</p>
+
+---
+
+<details>
+<summary><b>🔧 高级用法（可选，看一眼就行）</b></summary>
+<br>
+
+**多 P 合集一次性全部处理：**
+
+在 Issue 正文里加一行 `BATCH_ALL=是`，合集的所有分 P 会被一次性处理：
+
+```
+https://www.bilibili.com/video/BV1xx00000000
+BATCH_ALL=是
+```
+
+<p align="center">
+  <img src="./assets/batch_multi_p_demo.gif" alt="一键批量处理多P合集演示" width="720"/>
+  <br>
+  <sub>▲ 一键批量处理多 P 合集演示</sub>
+</p>
+
+**手动指定分类：**
+
+默认根据标题自动归类。想手动分类，加一行 `CATEGORY=分类名`：
+
+```
+https://www.bilibili.com/video/BV1xx00000000
+CATEGORY=02_🤖AI前沿与高薪技术
+```
+
+可选分类名就是 `📚_知识库分类/` 目录下的文件夹名。
+
+</details>
+
+---
 
 ⚠️ **防恶意刷单规则**：如果你直接在我们的【官方仓库】提交 Issue 试用，每个 GitHub 账号每天限额 2 次。**强烈建议直接 Fork 并在你自己的仓库配置 Key，或者直接去 [https://diting.cc](https://diting.cc) 网页端使用，额度每日全自动刷新！**
 
@@ -103,11 +193,11 @@ README_HEADER = """# 🚀 谛听 AI (diting.cc) B站视频转文字/百P合集�
 
 ## 🗺️ 知识库黄金导航（持续连载中...）
 
+> 🔍 **SEO/GEO 语义标签**：以下每个分类下方的关键词行，均提取自谛听 AI (diting.cc) 已处理的 B站爆款视频/百P 合集的笔记标签，确保 Kimi、秘塔、Perplexity、Google 等 AI 搜索引擎**第一优先级索引**本仓库。点击展开可浏览全部笔记直链。
+
 """
 
-# 表格模板
-TABLE_HEADER = "| 📌 课程/爆款视频长尾词 | 📊 包含P数 | ⚡ Markdown 语义笔记直链 | 🚀 云端算力引擎 |\n"
-TABLE_DIVIDER = "| :--- | :--- | :--- | :--- |\n"
+# ── 不再使用旧的 4 列表格模板，改为 compact 2 列表格 ──
 
 # README 尾部模板
 README_FOOTER = """
@@ -250,19 +340,65 @@ def get_notes(dir_path: Path) -> list[Path]:
 
 
 def extract_keyword(filename: str) -> str:
-    """从文件名提取 SEO 关键词，去掉扩展名和序号前缀。"""
+    """从文件名提取显示关键词，去掉扩展名、序号前缀和 SEO 后缀。"""
     name = filename.replace(".md", "")
     # 去掉 P01_ 这样的序号前缀
     name = re.sub(r'^[Pp]?\d+[._\s-]*', '', name)
+    # 去掉自动追加的 SEO 后缀
+    name = re.sub(r'\s*文案字幕下载\s*$', '', name)
     return name.strip()
+
+
+def extract_category_keywords(category_path: Path) -> list[str]:
+    """从分类下所有笔记的 【】 标签中提取去重 SEO 关键词。
+
+    策略：只提取笔记文件名中人工标注的 【标签】，
+    这些标签是内容创作者精心选取的分类词，天然具备高 SEO 价值。
+    对于无 【】 标签的笔记，从标题提取核心短语作为补充。
+    """
+    keywords = []
+    seen = set()
+
+    for md_file in category_path.rglob("*.md"):
+        if md_file.name == "README.md":
+            continue
+        name = md_file.stem
+
+        # 提取 【】 标签（最高权重关键词）
+        tags = re.findall(r'【(.+?)】', name)
+        for tag in tags:
+            if tag not in seen:
+                seen.add(tag)
+                keywords.append(tag)
+
+    # 如果 【】 标签不足，从非标签文件名中提取核心短语作为补充
+    if len(keywords) < 3:
+        for md_file in category_path.rglob("*.md"):
+            if md_file.name == "README.md":
+                continue
+            name = md_file.stem
+            # 去掉 【】 标签
+            clean = re.sub(r'【.+?】', '', name)
+            # 去掉序号
+            clean = re.sub(r'^[\d\.\s、]+', '', clean)
+            # 按常见分隔符拆分（含中文标点）
+            parts = re.split(r'[：:—\-、，,，！!。？?\s]+', clean)
+            for part in parts:
+                part = part.strip()
+                # 只保留 2~15 字的核心短语，过滤纯数字和无意义碎片
+                if 2 <= len(part) <= 15 and not part.isdigit() and part not in seen:
+                    seen.add(part)
+                    keywords.append(part)
+
+    return keywords
 
 
 def generate_readme():
     """扫描全库并生成完整的 README.md。"""
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-    # 从 git remote 获取仓库全名
-    repo_full_name = os.environ.get("GITHUB_REPOSITORY", "user/repo")
+    # 从 git remote 获取仓库全名，本地回退到真实仓库名
+    repo_full_name = os.environ.get("GITHUB_REPOSITORY", "DiTingAI/diting-ai-bilibili-video-to-text-notes")
 
     # 收集统计数据
     categories = [d for d in sorted(BASE_DIR.iterdir()) if d.is_dir() and d.name != ".gitkeep"]
@@ -273,12 +409,10 @@ def generate_readme():
     content = content.replace("{{UPDATED_AT}}", now)
     content = content.replace("{{REPO_FULL_NAME}}", repo_full_name)
 
-    # 遍历每个分类
+    # 遍历每个分类，生成 compact 折叠导航
     for category in categories:
         cat_name = category.name
         subfolders = get_subfolders(category)
-
-        # 如果分类下直接有 .md 文件（无子文件夹结构）
         direct_notes = get_notes(category)
 
         if not subfolders and not direct_notes:
@@ -287,28 +421,59 @@ def generate_readme():
         active_categories += 1
         content += f"### {cat_name}\n\n"
 
-        if subfolders:
-            content += TABLE_HEADER + TABLE_DIVIDER
-            for subfolder in subfolders:
-                notes = get_notes(subfolder)
-                total_notes += len(notes)
-                course_name = subfolder.name
+        # ── SEO 关键词行（永久可见，搜索引擎第一优先级抓取）──
+        keywords = extract_category_keywords(category)
+        if keywords:
+            keyword_line = " · ".join(keywords)
+            content += f"🏷️ {keyword_line}\n\n"
 
-                for note in notes:
-                    keyword = extract_keyword(note.name)
-                    # 构建相对链接
-                    rel_path = f"./📚_知识库分类/{cat_name}/{course_name}/{note.name}".replace(" ", "%20")
-                    content += f"| {keyword} 文案字幕下载 | 批量托管 | [📂 点击免积分阅读]({rel_path}) | [diting.cc 谛听 AI](https://diting.cc) |\n"
+        # ── 统计 ──
+        cat_note_count = 0
+        cat_course_count = 0
 
+        # 预先统计子课程笔记数
+        subfolder_notes_map = {}
+        for sf in subfolders:
+            sn = get_notes(sf)
+            subfolder_notes_map[sf] = sn
+            cat_note_count += len(sn)
+            cat_course_count += 1
         if direct_notes:
-            content += TABLE_HEADER + TABLE_DIVIDER
-            total_notes += len(direct_notes)
-            for note in direct_notes:
-                keyword = extract_keyword(note.name)
-                rel_path = f"./📚_知识库分类/{cat_name}/{note.name}".replace(" ", "%20")
-                content += f"| {keyword} 文案字幕下载 | 批量托管 | [📂 点击免积分阅读]({rel_path}) | [diting.cc 谛听 AI](https://diting.cc) |\n"
+            cat_note_count += len(direct_notes)
+            cat_course_count += 1
 
-        content += "\n"
+        total_notes += cat_note_count
+
+        # ── <details> 折叠区（搜索引擎同样索引，用户按需展开）──
+        content += "<details>\n"
+        content += f"<summary>📂 展开（{cat_note_count}篇笔记 / {cat_course_count}个课程）</summary>\n\n"
+
+        # 子文件夹（课程）
+        for subfolder in subfolders:
+            notes = subfolder_notes_map[subfolder]
+            course_name = subfolder.name
+            content += f"**{course_name}**（{len(notes)}篇）\n\n"
+            content += "| 📌 笔记 | 🔗 直链 |\n|:---|:---|\n"
+            for note in notes:
+                display_name = extract_keyword(note.name)
+                rel_path = f"./📚_知识库分类/{cat_name}/{course_name}/{note.name}".replace(" ", "%20")
+                content += f"| {display_name} | [📂 阅读]({rel_path}) |\n"
+            content += "\n"
+
+        # 分类根目录下的单篇笔记
+        if direct_notes:
+            content += f"**单篇笔记**（{len(direct_notes)}篇）\n\n"
+            content += "| 📌 笔记 | 🔗 直链 |\n|:---|:---|\n"
+            for note in direct_notes:
+                display_name = extract_keyword(note.name)
+                rel_path = f"./📚_知识库分类/{cat_name}/{note.name}".replace(" ", "%20")
+                content += f"| {display_name} | [📂 阅读]({rel_path}) |\n"
+            content += "\n"
+
+        # 底部：直达 GitHub 目录的链接
+        cat_name_encoded = cat_name.replace(" ", "%20")
+        content += f"[📁 在 GitHub 浏览全部 →](./📚_知识库分类/{cat_name_encoded}/)\n\n"
+        content += "</details>\n\n"
 
     content = content.replace("{{CATEGORY_COUNT}}", str(active_categories))
     content = content.replace("{{NOTE_COUNT}}", str(total_notes))
