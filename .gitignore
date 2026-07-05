@@ -216,3 +216,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# 待处理原始 MD（处理后归入知识库并删除）
+_待处理/

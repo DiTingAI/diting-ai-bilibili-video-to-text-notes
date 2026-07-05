@@ -167,8 +167,8 @@ CATEGORY=02_🤖AI前沿与高薪技术
 ## 📊 知识库统计
 
 - 📂 分类数：**2**
-- 📄 笔记总数：**54**
-- 🕐 最后更新：**2026-07-05 13:33**
+- 📄 笔记总数：**69**
+- 🕐 最后更新：**2026-07-06 00:10**
 
 ---
 
@@ -178,10 +178,30 @@ CATEGORY=02_🤖AI前沿与高薪技术
 
 ### 02_🤖AI前沿与高薪技术
 
-🏷️ 吴恩达 · Agent智能体 · 年公认最好的教程 · 大模型入门到进阶 · 一套全解决 · Agentic · AI · 附带课件代码
+🏷️ 吴恩达 · Agent智能体 · How to choose an AI project如何选择一个人工智能项目2 · How to choose an AI project如何选择一个人工智能项目1 · Every job function needs to learn to use data每个工作职能都需要学会使用数据 · Workflow of a Machine Learning project机器学习项目的工作流程 · What makes an AI company造就一家人工智能公司需要什么 · Machine Learning机器学习 · The terminology of AI人工智能术语 · What Machine Learning can and cannot do机器学习的可行性 · Intuitive explanation of deep learning深度学习的直观解释1 · Week1-What is AI 1.Introduction简介 · Week2 Building AI Projects 1.Introduction简介 · Workflow of a Data Science project数据科学项目的工作流程 · Intuitive explanation of deep learning深度学习的直观解释2 · More examples of  Machine Learning can and cannot do机器学习的可行性事例 · What is data什么是数据
 
 <details>
-<summary>📂 展开（1篇笔记 / 1个课程）</summary>
+<summary>📂 展开（16篇笔记 / 2个课程）</summary>
+
+**吴恩达-AI for Everyone（人人AI）**（15篇）
+
+| 📌 笔记 | 🔗 直链 |
+|:---|:---|
+| 【Every job function needs to learn to use data每个工作职能都需要学会使用数据】 | [📂 阅读](./📚_知识库分类/02_🤖AI前沿与高薪技术/吴恩达-AI%20for%20Everyone（人人AI）/【Every%20job%20function%20needs%20to%20learn%20to%20use%20data每个工作职能都需要学会使用数据】.md) |
+| 【How to choose an AI project如何选择一个人工智能项目1】 | [📂 阅读](./📚_知识库分类/02_🤖AI前沿与高薪技术/吴恩达-AI%20for%20Everyone（人人AI）/【How%20to%20choose%20an%20AI%20project如何选择一个人工智能项目1】.md) |
+| 【How to choose an AI project如何选择一个人工智能项目2】 | [📂 阅读](./📚_知识库分类/02_🤖AI前沿与高薪技术/吴恩达-AI%20for%20Everyone（人人AI）/【How%20to%20choose%20an%20AI%20project如何选择一个人工智能项目2】.md) |
+| 【Intuitive explanation of deep learning深度学习的直观解释1】 | [📂 阅读](./📚_知识库分类/02_🤖AI前沿与高薪技术/吴恩达-AI%20for%20Everyone（人人AI）/【Intuitive%20explanation%20of%20deep%20learning深度学习的直观解释1】.md) |
+| 【Intuitive explanation of deep learning深度学习的直观解释2】 | [📂 阅读](./📚_知识库分类/02_🤖AI前沿与高薪技术/吴恩达-AI%20for%20Everyone（人人AI）/【Intuitive%20explanation%20of%20deep%20learning深度学习的直观解释2】.md) |
+| 【Machine Learning机器学习】 | [📂 阅读](./📚_知识库分类/02_🤖AI前沿与高薪技术/吴恩达-AI%20for%20Everyone（人人AI）/【Machine%20Learning机器学习】.md) |
+| 【More examples of  Machine Learning can and cannot do机器学习的可行性事例】 | [📂 阅读](./📚_知识库分类/02_🤖AI前沿与高薪技术/吴恩达-AI%20for%20Everyone（人人AI）/【More%20examples%20of%20%20Machine%20Learning%20can%20and%20cannot%20do机器学习的可行性事例】.md) |
+| 【The terminology of AI人工智能术语】 | [📂 阅读](./📚_知识库分类/02_🤖AI前沿与高薪技术/吴恩达-AI%20for%20Everyone（人人AI）/【The%20terminology%20of%20AI人工智能术语】.md) |
+| 【Week1-What is AI 1.Introduction简介】 | [📂 阅读](./📚_知识库分类/02_🤖AI前沿与高薪技术/吴恩达-AI%20for%20Everyone（人人AI）/【Week1-What%20is%20AI%201.Introduction简介】.md) |
+| 【Week2 Building AI Projects 1.Introduction简介】 | [📂 阅读](./📚_知识库分类/02_🤖AI前沿与高薪技术/吴恩达-AI%20for%20Everyone（人人AI）/【Week2%20Building%20AI%20Projects%201.Introduction简介】.md) |
+| 【What Machine Learning can and cannot do机器学习的可行性】 | [📂 阅读](./📚_知识库分类/02_🤖AI前沿与高薪技术/吴恩达-AI%20for%20Everyone（人人AI）/【What%20Machine%20Learning%20can%20and%20cannot%20do机器学习的可行性】.md) |
+| 【What is data什么是数据】 | [📂 阅读](./📚_知识库分类/02_🤖AI前沿与高薪技术/吴恩达-AI%20for%20Everyone（人人AI）/【What%20is%20data什么是数据】.md) |
+| 【What makes an AI company造就一家人工智能公司需要什么】 | [📂 阅读](./📚_知识库分类/02_🤖AI前沿与高薪技术/吴恩达-AI%20for%20Everyone（人人AI）/【What%20makes%20an%20AI%20company造就一家人工智能公司需要什么】.md) |
+| 【Workflow of a Data Science project数据科学项目的工作流程】 | [📂 阅读](./📚_知识库分类/02_🤖AI前沿与高薪技术/吴恩达-AI%20for%20Everyone（人人AI）/【Workflow%20of%20a%20Data%20Science%20project数据科学项目的工作流程】.md) |
+| 【Workflow of a Machine Learning project机器学习项目的工作流程】 | [📂 阅读](./📚_知识库分类/02_🤖AI前沿与高薪技术/吴恩达-AI%20for%20Everyone（人人AI）/【Workflow%20of%20a%20Machine%20Learning%20project机器学习项目的工作流程】.md) |
 
 **单篇笔记**（1篇）
 
@@ -195,7 +215,7 @@ CATEGORY=02_🤖AI前沿与高薪技术
 
 ### 99_📁其他优质网课
 
-🏷️ 西方哲学 · 问题分析 · 市场营销工具集 · 管理模型工具 · 战略思维工具 · 演讲沟通 · 需求洞察 · 商业思维模型 · 战略对齐 · 结构化思维工具 · 效率提升 · 压力管理 · 目标落地 · 项目启动 · 即兴演讲 · 持续改进 · 高效复盘 · 问题汇报 · 高效管理
+🏷️ 西方哲学 · 市场营销工具集 · 战略对齐 · 问题分析 · 压力管理 · 演讲沟通 · 效率提升 · 问题汇报 · 战略思维工具 · 商业思维模型 · 持续改进 · 需求洞察 · 项目启动 · 结构化思维工具 · 高效管理 · 高效复盘 · 管理模型工具 · 即兴演讲 · 目标落地
 
 <details>
 <summary>📂 展开（53篇笔记 / 2个课程）</summary>
@@ -369,5 +389,5 @@ export DITING_VERIFY_SSL="true"
 </p>
 
 <p align="center">
-  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-07-05 13:33</sub>
+  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-07-06 00:10</sub>
 </p>
