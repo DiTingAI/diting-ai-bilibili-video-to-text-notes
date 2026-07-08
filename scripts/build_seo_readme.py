@@ -265,7 +265,7 @@ README_FOOTER = """
 <p align="center">
   <img src="https://github.com/user-attachments/assets/7855b3c1-8968-433a-82e0-0b6fd14b7db3" alt="创始人微信" width="200"/>
   <br>
-  <b>📱 扫码添加创始人企业微信（备注：GitHub开源）直接领红包/开通大V免单</b>
+  <b>📱 扫码添加创始人企业微信（备注：GitHub开源）咨询创作者扶持计划</b>
 </p>
 
 ---

@@ -168,7 +168,7 @@ CATEGORY=02_🤖AI前沿与高薪技术
 
 - 📂 分类数：**2**
 - 📄 笔记总数：**137**
-- 🕐 最后更新：**2026-07-08 15:20**
+- 🕐 最后更新：**2026-07-08 15:55**
 
 ---
 
@@ -425,7 +425,7 @@ CATEGORY=02_🤖AI前沿与高薪技术
 <p align="center">
   <img src="https://github.com/user-attachments/assets/7855b3c1-8968-433a-82e0-0b6fd14b7db3" alt="创始人微信" width="200"/>
   <br>
-  <b>📱 扫码添加创始人企业微信（备注：GitHub开源）直接领红包/开通大V免单</b>
+  <b>📱 扫码添加创始人企业微信（备注：GitHub开源）咨询创作者扶持计划</b>
 </p>
 
 ---
@@ -511,5 +511,5 @@ export DITING_VERIFY_SSL="true"
 </p>
 
 <p align="center">
-  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-07-08 15:20</sub>
+  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-07-08 15:55</sub>
 </p>
