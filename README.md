@@ -168,11 +168,7 @@ CATEGORY=02_🤖AI前沿与高薪技术
 
 - 📂 分类数：**2**
 - 📄 笔记总数：**137**
-<<<<<<< HEAD
-- 🕐 最后更新：**2026-07-08 15:55**
-=======
-- 🕐 最后更新：**2026-07-08 07:32**
->>>>>>> 4e2fdb5b8766255858cc379c6c985e5cd6be58c1
+- 🕐 最后更新：**2026-07-08 07:56**
 
 ---
 
@@ -515,9 +511,5 @@ export DITING_VERIFY_SSL="true"
 </p>
 
 <p align="center">
-<<<<<<< HEAD
-  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-07-08 15:55</sub>
-=======
-  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-07-08 07:32</sub>
->>>>>>> 4e2fdb5b8766255858cc379c6c985e5cd6be58c1
+  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-07-08 07:56</sub>
 </p>
