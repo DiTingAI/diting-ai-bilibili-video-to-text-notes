@@ -168,7 +168,7 @@ CATEGORY=02_🤖AI前沿与高薪技术
 
 - 📂 分类数：**2**
 - 📄 笔记总数：**137**
-- 🕐 最后更新：**2026-07-08 15:20**
+- 🕐 最后更新：**2026-07-08 07:32**
 
 ---
 
@@ -178,7 +178,7 @@ CATEGORY=02_🤖AI前沿与高薪技术
 
 ### 02_🤖AI前沿与高薪技术
 
-🏷️ 吴恩达 · Agent智能体 · 腾讯混元生图-13-小程序执行过程 · SD模型原理-05-SD模型原理 · AIGC简介-04-AIGC产品形态 · SD模型训练与部署-30-DreamBooth预测效果演示 · SD模型原理-10-VAE模型 · SD模型训练与部署-11-jupyterlab连接方式 · AIGC简介-03-AIGC应用场景 · SD模型原理-01-章节介绍 · SD模型训练与部署-25-lora训练参数设置 · SD模型原理-09-unet模型 · SD模型训练与部署-07-服务创建 · 腾讯混元生图-08-小程序AI绘画的代码结构 · SD模型训练与部署-16-dreambooth变量设置和模型转换 · SD模型训练与部署-22-lora训练思想介绍 · 腾讯混元生图-05-腾讯混元生图API使用 · SD模型训练与部署-12-stabledifusion的训练方式 · 腾讯混元生图-11-小程序AI绘画中转服务 · SD模型训练与部署-23-lora训练的代码结构 · SD模型训练与部署-09-webui连接方式简介 · SD模型原理-08-Clip模型 · SD模型原理-02-SD模型相关概念 · AIGC简介-02-AIGC是什么 · SD模型训练与部署-01-内容介绍 · SD模型训练与部署-03-Hai平台优势 · SD模型训练与部署-19-dreambooth训练参数的设置 · SD模型训练与部署-29-模型预测介绍 · SD模型训练与部署-20-dreambooth训练过程 · 腾讯混元生图-03-产品优势 · SD模型训练与部署-25-lora训练的网络配置 · SD模型原理-07-SD模型架构构成 · 腾讯混元生图-07-小程序AI绘画的思路 · 多模态AIGC图像生成课程导学 · SD模型训练与部署-10-webui连接方式 · SD模型训练与部署-28-预训练模型的获取方式 · SD模型训练与部署-24-lora训练的数据准备 · 图像生成-04-扩散模型图像生成 · SD模型训练与部署-08-实例详细信息 · SD模型原理-03-SD模型发展历程 · SD模型原理-11-SD模型的处理流程 · 图像生成-05-基于扩散模型的图像生成应用 · 图像生成-03-GAN图像生成 · SD模型训练与部署-05-创建SD服务的流程 · SD模型训练与部署-04-Hai平台应用场景 · SD模型训练与部署-32-内容总结 · 腾讯混元生图-04-腾讯混元生图应用场景 · 【课程完结 · SD模型训练与部署-14-dreambooth训练的代码结构 · SD模型训练与部署-21-dreambooth模型权重保存 · SD模型训练与部署-02-Hai平台简介 · SD模型训练与部署-31-lora预测效果演示 · SD模型训练与部署-27-lora训练过程及权重保存 · AIGC简介-01-AIGC内容简介 · 腾讯混元生图-10-小程序AI绘画的任务管理 · 腾讯混元生图-09-小程序AI绘画API接口调用 · 图像生成-01-常见的图像生成算法 · SD模型原理-06-SD模型实现 · 腾讯混元生图-12-小程序前端界面 · 腾讯混元生图-02-腾讯混元生图介绍 · SD模型训练与部署-18-dreambooth加速器设置 · 腾讯混元生图-01-内容介绍 · SD模型训练与部署-17-dreambooth提示词 · SD模型训练与部署-13-dreambooth思想介绍 · SD模型训练与部署-26-lora训练的输出设置 · SD模型原理-04-SD模型的特点 · SD模型训练与部署-06-Hai平台的使用方法 · SD模型训练与部署-15-dreambooth训练数据准备 · 图像生成-02-VAE图像生成 · SD模型原理-12-SD模型的应用场景 · How to choose an AI project如何选择一个人工智能项目2 · How to choose an AI project如何选择一个人工智能项目1 · Every job function needs to learn to use data每个工作职能都需要学会使用数据 · Workflow of a Machine Learning project机器学习项目的工作流程 · What makes an AI company造就一家人工智能公司需要什么 · Machine Learning机器学习 · The terminology of AI人工智能术语 · What Machine Learning can and cannot do机器学习的可行性 · Intuitive explanation of deep learning深度学习的直观解释1 · Week1-What is AI 1.Introduction简介 · Week2 Building AI Projects 1.Introduction简介 · Workflow of a Data Science project数据科学项目的工作流程 · Intuitive explanation of deep learning深度学习的直观解释2 · More examples of  Machine Learning can and cannot do机器学习的可行性事例 · What is data什么是数据
+🏷️ 吴恩达 · Agent智能体 · 腾讯混元生图-09-小程序AI绘画API接口调用 · SD模型训练与部署-32-内容总结 · 腾讯混元生图-11-小程序AI绘画中转服务 · 多模态AIGC图像生成课程导学 · SD模型训练与部署-30-DreamBooth预测效果演示 · 腾讯混元生图-10-小程序AI绘画的任务管理 · 腾讯混元生图-03-产品优势 · 腾讯混元生图-04-腾讯混元生图应用场景 · SD模型原理-07-SD模型架构构成 · 图像生成-05-基于扩散模型的图像生成应用 · SD模型训练与部署-18-dreambooth加速器设置 · SD模型原理-06-SD模型实现 · AIGC简介-02-AIGC是什么 · 腾讯混元生图-02-腾讯混元生图介绍 · SD模型训练与部署-02-Hai平台简介 · SD模型训练与部署-16-dreambooth变量设置和模型转换 · SD模型训练与部署-21-dreambooth模型权重保存 · SD模型训练与部署-11-jupyterlab连接方式 · SD模型训练与部署-12-stabledifusion的训练方式 · SD模型原理-02-SD模型相关概念 · AIGC简介-04-AIGC产品形态 · SD模型原理-10-VAE模型 · SD模型训练与部署-26-lora训练的输出设置 · SD模型训练与部署-23-lora训练的代码结构 · SD模型原理-04-SD模型的特点 · 腾讯混元生图-01-内容介绍 · SD模型训练与部署-13-dreambooth思想介绍 · SD模型训练与部署-06-Hai平台的使用方法 · SD模型训练与部署-15-dreambooth训练数据准备 · SD模型原理-01-章节介绍 · 腾讯混元生图-12-小程序前端界面 · SD模型训练与部署-07-服务创建 · SD模型训练与部署-25-lora训练参数设置 · SD模型训练与部署-05-创建SD服务的流程 · SD模型原理-11-SD模型的处理流程 · SD模型训练与部署-14-dreambooth训练的代码结构 · SD模型训练与部署-01-内容介绍 · SD模型训练与部署-03-Hai平台优势 · 图像生成-01-常见的图像生成算法 · SD模型训练与部署-08-实例详细信息 · SD模型原理-12-SD模型的应用场景 · SD模型训练与部署-20-dreambooth训练过程 · SD模型训练与部署-24-lora训练的数据准备 · SD模型训练与部署-10-webui连接方式 · SD模型训练与部署-22-lora训练思想介绍 · 腾讯混元生图-07-小程序AI绘画的思路 · SD模型训练与部署-31-lora预测效果演示 · 图像生成-04-扩散模型图像生成 · 腾讯混元生图-05-腾讯混元生图API使用 · SD模型原理-03-SD模型发展历程 · SD模型训练与部署-27-lora训练过程及权重保存 · 腾讯混元生图-08-小程序AI绘画的代码结构 · SD模型训练与部署-17-dreambooth提示词 · 【课程完结 · SD模型训练与部署-09-webui连接方式简介 · 图像生成-02-VAE图像生成 · SD模型原理-08-Clip模型 · SD模型原理-09-unet模型 · AIGC简介-03-AIGC应用场景 · SD模型原理-05-SD模型原理 · SD模型训练与部署-28-预训练模型的获取方式 · 腾讯混元生图-13-小程序执行过程 · SD模型训练与部署-19-dreambooth训练参数的设置 · SD模型训练与部署-25-lora训练的网络配置 · 图像生成-03-GAN图像生成 · SD模型训练与部署-04-Hai平台应用场景 · SD模型训练与部署-29-模型预测介绍 · AIGC简介-01-AIGC内容简介 · Week2 Building AI Projects 1.Introduction简介 · Intuitive explanation of deep learning深度学习的直观解释2 · How to choose an AI project如何选择一个人工智能项目2 · Workflow of a Machine Learning project机器学习项目的工作流程 · Intuitive explanation of deep learning深度学习的直观解释1 · The terminology of AI人工智能术语 · Week1-What is AI 1.Introduction简介 · Every job function needs to learn to use data每个工作职能都需要学会使用数据 · What is data什么是数据 · Workflow of a Data Science project数据科学项目的工作流程 · How to choose an AI project如何选择一个人工智能项目1 · What Machine Learning can and cannot do机器学习的可行性 · What makes an AI company造就一家人工智能公司需要什么 · Machine Learning机器学习 · More examples of  Machine Learning can and cannot do机器学习的可行性事例
 
 <details>
 <summary>📂 展开（84篇笔记 / 3个课程）</summary>
@@ -288,7 +288,7 @@ CATEGORY=02_🤖AI前沿与高薪技术
 
 ### 99_📁其他优质网课
 
-🏷️ 西方哲学 · 市场营销工具集 · 战略对齐 · 问题分析 · 压力管理 · 演讲沟通 · 效率提升 · 问题汇报 · 战略思维工具 · 商业思维模型 · 持续改进 · 需求洞察 · 项目启动 · 结构化思维工具 · 高效管理 · 高效复盘 · 管理模型工具 · 即兴演讲 · 目标落地
+🏷️ 西方哲学 · 问题分析 · 市场营销工具集 · 管理模型工具 · 战略思维工具 · 演讲沟通 · 需求洞察 · 商业思维模型 · 战略对齐 · 结构化思维工具 · 效率提升 · 压力管理 · 目标落地 · 项目启动 · 即兴演讲 · 持续改进 · 高效复盘 · 问题汇报 · 高效管理
 
 <details>
 <summary>📂 展开（53篇笔记 / 2个课程）</summary>
@@ -511,5 +511,5 @@ export DITING_VERIFY_SSL="true"
 </p>
 
 <p align="center">
-  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-07-08 15:20</sub>
+  <sub>🤖 本 README 由 <code>scripts/build_seo_readme.py</code> 全自动生成 | 最后更新: 2026-07-08 07:32</sub>
 </p>
